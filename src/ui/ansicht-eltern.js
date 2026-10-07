@@ -8,6 +8,13 @@ import { FEHLERBILDER } from '../core/aufgabe.js';
 import { THEMEN, skillId, skillsFuerKlasse } from '../inhalte/index.js';
 import { avatar, sterne, statusPille } from './bausteine.js';
 import { profilFormular, profilLesen, profilFormularBinden } from './profilformular.js';
+import { deutscheStimmen, beiStimmenGeladen, einstellen, sprich, kannSprechen, aktuelleStimme } from './sprache.js';
+
+const TEMPI = [
+  ['0.8', 'Langsam'],
+  ['0.95', 'Normal'],
+  ['1.1', 'Zügig'],
+];
 
 export async function zeigeEltern(app) {
   if (!app.elternOffen) return sperre(app);
@@ -15,6 +22,11 @@ export async function zeigeEltern(app) {
   const ansicht = app.elternAnsicht || (app.elternAnsicht = { auswahl: profile[0] ? profile[0].id : null, bearbeiten: null, neu: false, loeschen: null, allesLoeschen: false });
   if (ansicht.auswahl && !profile.some((p) => p.id === ansicht.auswahl)) ansicht.auswahl = profile[0] ? profile[0].id : null;
 
+  const geraet = await app.db.geraet();
+  const geraetSichern = async () => {
+    await app.db.geraetSpeichern(geraet);
+    einstellen(geraet);
+  };
   const gewaehlt = profile.find((p) => p.id === ansicht.auswahl);
   const lernstand = gewaehlt ? await lernstandHTML(app, gewaehlt) : '<p class="leise">Noch keine Profile angelegt.</p>';
 
@@ -38,6 +50,24 @@ export async function zeigeEltern(app) {
           : ''
       }
       ${lernstand}
+    </section>
+
+    <section class="eltern-abschnitt">
+      <h2>Vorlesestimme</h2>
+      <p class="leise">Die Stimme kommt vom Gerät. Die Auswahl gilt nur für dieses Gerät.</p>
+      <div id="stimme-wahl" class="stimme-wahl"></div>
+      <details class="anleitung">
+        <summary>Natürlichere Stimmen installieren</summary>
+        <ul>
+          <li><b>iPhone und iPad:</b> Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch.
+            Eine Stimme mit „Premium“ oder „Erweitert“ laden, z. B. Anna oder Helena.</li>
+          <li><b>Mac:</b> Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → Systemstimme → Stimmen verwalten.</li>
+          <li><b>Android:</b> Einstellungen → Sprachen und Eingabe → Sprachausgabe (Text-in-Sprache) → Google-Sprachausgabe →
+            Sprachdaten installieren → Deutsch. Die Menüs heißen je nach Gerät etwas anders. Am besten in Chrome öffnen.</li>
+          <li><b>Windows:</b> Im Browser Microsoft Edge gibt es sehr natürliche Online-Stimmen, z. B. „Katja Online (Natural)“ oder „Seraphina“.</li>
+        </ul>
+        <p class="leise">Danach die App neu laden und hier die neue Stimme auswählen.</p>
+      </details>
     </section>
 
     <section class="eltern-abschnitt">
@@ -72,6 +102,15 @@ export async function zeigeEltern(app) {
     </section>
     <p><a class="knopf" href="#/">Zur Profilauswahl</a></p>`,
     {
+      async tempo(el) {
+        geraet.tempo = Number(el.dataset.wert);
+        await geraetSichern();
+        stimmeZeigen();
+        sprich('Wie viel ist acht plus fünf?');
+      },
+      probe() {
+        sprich('Hallo! Wie viel ist acht plus fünf? Fülle zuerst bis zur Zehn auf.');
+      },
       auswahl(el) {
         ansicht.auswahl = el.dataset.id;
         zeigeEltern(app);
@@ -132,6 +171,38 @@ export async function zeigeEltern(app) {
       },
     }
   );
+
+  function stimmeZeigen() {
+    const el = document.getElementById('stimme-wahl');
+    if (!el) return;
+    if (!kannSprechen()) {
+      el.innerHTML = '<p>Dieser Browser kann nicht vorlesen.</p>';
+      return;
+    }
+    const liste = deutscheStimmen();
+    if (!liste.length) {
+      el.innerHTML = '<p>Auf diesem Gerät wurde noch keine deutsche Stimme gefunden. Siehe Anleitung unten.</p>';
+      return;
+    }
+    const aktiv = aktuelleStimme();
+    const tempo = String(geraet.tempo || 0.95);
+    el.innerHTML = `<label class="feld"><span class="feld-name">Stimme</span>
+        <select id="stimme">${liste
+          .map((v, i) => `<option value="${esc(v.voiceURI)}" ${aktiv && v.voiceURI === aktiv.voiceURI ? 'selected' : ''}>${esc(v.name)}${i === 0 ? ' – empfohlen' : ''}</option>`)
+          .join('')}</select></label>
+      <div class="feld"><span class="feld-name">Sprechtempo</span>
+        <div class="segment" role="group" aria-label="Sprechtempo">${TEMPI.map(
+          ([w, n]) => `<button type="button" data-action="tempo" data-wert="${w}" aria-pressed="${Number(w) === Number(tempo)}">${n}</button>`
+        ).join('')}</div></div>
+      <div class="knopfreihe"><button type="button" class="knopf" data-action="probe">Probe hören</button></div>`;
+    el.querySelector('#stimme').addEventListener('change', async (ev) => {
+      geraet.stimme = ev.target.value;
+      await geraetSichern();
+      sprich('Hallo! Ich lese dir die Aufgaben vor.');
+    });
+  }
+  stimmeZeigen();
+  app.aufraeumen = beiStimmenGeladen(stimmeZeigen);
 
   const form = document.getElementById('profil-form');
   if (form) {

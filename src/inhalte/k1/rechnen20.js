@@ -11,7 +11,7 @@ function plusOhne(mitBild) {
   const s = a + b;
   return zahlAufgabe({
     text: 'Rechne.',
-    sprich: `${a} plus ${b}`,
+    sprich: `Wie viel ist ${a} plus ${b}?`,
     rechnung: `${a} + ${b} = ?`,
     bild: mitBild ? zwanzigerfeld(zellen(20, ['rot', a], ['blau', b])) : '',
     loesung: s,
@@ -36,7 +36,7 @@ function verdoppeln(mitBild) {
   for (let i = 0; i < b; i++) feld[10 + i] = 'blau';
   return zahlAufgabe({
     text: fastDoppel ? 'Rechne. Denk ans Verdoppeln!' : 'Verdopple.',
-    sprich: `${a} plus ${b}`,
+    sprich: `Wie viel ist ${a} plus ${b}?`,
     rechnung: `${a} + ${b} = ?`,
     bild: mitBild ? zwanzigerfeld(feld) : '',
     loesung: s,
@@ -59,7 +59,7 @@ function plusUeber(mitBild) {
   const s = a + b;
   return zahlAufgabe({
     text: 'Rechne. Fülle zuerst bis zur 10 auf.',
-    sprich: `${a} plus ${b}`,
+    sprich: `Wie viel ist ${a} plus ${b}?`,
     rechnung: `${a} + ${b} = ?`,
     bild: mitBild ? zwanzigerfeld(zellen(20, ['rot', a], ['blau', b])) : '',
     loesung: s,
@@ -85,7 +85,7 @@ function minusOhne(mitBild) {
   const d = a - b;
   return zahlAufgabe({
     text: 'Rechne.',
-    sprich: `${a} minus ${b}`,
+    sprich: `Wie viel ist ${a} minus ${b}?`,
     rechnung: `${a} − ${b} = ?`,
     bild: mitBild ? zwanzigerfeld(zellen(20, ['rot', d], ['weg', b])) : '',
     loesung: d,
@@ -110,7 +110,7 @@ function minusUeber(mitBild) {
   const d = a - b;
   return zahlAufgabe({
     text: 'Rechne. Geh zuerst zurück bis zur 10.',
-    sprich: `${a} minus ${b}`,
+    sprich: `Wie viel ist ${a} minus ${b}?`,
     rechnung: `${a} − ${b} = ?`,
     bild: mitBild ? zwanzigerfeld(zellen(20, ['rot', d], ['weg', b])) : '',
     loesung: d,

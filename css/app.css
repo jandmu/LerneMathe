@@ -1947,6 +1947,42 @@ html.klein .rechnung {
 
 /* ---------- Eltern ---------- */
 
+.stimme-wahl {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stimme-wahl select {
+  font: inherit;
+  padding: 10px 12px;
+  border: 2px solid var(--linie);
+  border-radius: 10px;
+  background: var(--papier);
+  color: var(--tinte);
+  max-width: 100%;
+}
+
+.anleitung {
+  padding: 12px 16px;
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+}
+
+.anleitung summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.anleitung ul {
+  margin: 10px 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .eltern-abschnitt {
   display: flex;
   flex-direction: column;

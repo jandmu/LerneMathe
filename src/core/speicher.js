@@ -137,6 +137,15 @@ export class Datenbank {
     await this.backend.schreiben('fortschritt:' + id, f);
   }
 
+  /** Einstellungen dieses Geräts (z. B. Vorlesestimme). Werden nicht exportiert, weil sie vom Gerät abhängen. */
+  async geraet() {
+    return (await this.backend.lesen('geraet')) || {};
+  }
+
+  async geraetSpeichern(einstellungen) {
+    await this.backend.schreiben('geraet', einstellungen);
+  }
+
   /** Alle Daten als ein Objekt, z. B. zum Sichern oder Umziehen auf ein anderes Gerät. */
   async exportieren() {
     const profile = await this.profile();

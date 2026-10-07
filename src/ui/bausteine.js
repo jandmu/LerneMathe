@@ -55,6 +55,11 @@ export function istGesichert(fach) {
 export function vorleseText(a) {
   if (a.sprich) return a.sprich;
   const tmp = String(a.text).replace(/<[^>]*>/g, ' ');
-  const rechnung = a.rechnung ? String(a.rechnung).replace(/<[^>]*>/g, ' ').replace(/\?/g, '') : '';
+  const rechnung = a.rechnung
+    ? String(a.rechnung)
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s*=\s*\?\s*$/, '')
+        .replace(/\?/g, '')
+    : '';
   return `${tmp} ${rechnung}`.replace(/\s+/g, ' ').trim();
 }

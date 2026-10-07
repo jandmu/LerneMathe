@@ -12,7 +12,7 @@ export function plus10(mitBild) {
   if (a < b) weg.unshift(S(`Tipp: Fang mit der größeren Zahl an. ${b} + ${a} ergibt dasselbe und geht schneller.`));
   return zahlAufgabe({
     text: 'Rechne.',
-    sprich: `${a} plus ${b}`,
+    sprich: `Wie viel ist ${a} plus ${b}?`,
     rechnung: `${a} + ${b} = ?`,
     bild: mitBild ? zehnerfeld(zellen(10, ['rot', a], ['blau', b])) : '',
     loesung: s,
@@ -29,7 +29,7 @@ export function minus10(mitBild) {
   const d = a - b;
   return zahlAufgabe({
     text: 'Rechne.',
-    sprich: `${a} minus ${b}`,
+    sprich: `Wie viel ist ${a} minus ${b}?`,
     rechnung: `${a} − ${b} = ?`,
     bild: mitBild ? zehnerfeld(zellen(10, ['rot', d], ['weg', b])) : '',
     loesung: d,

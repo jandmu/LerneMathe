@@ -1,0 +1,2079 @@
+/*
+ * Mathewerkstatt – Gestaltung
+ * Layout: Rechenheft. Karopapier als Grund, Inhalte als Blätter darauf. Füllerblau als Akzent,
+ * rote und blaue Wendeplättchen als Anschauungsmaterial, Rot- und Grünstift für Rückmeldungen.
+ * Klasse 1–2 (html.klein): größere Schrift, große Zahlentasten, wenig Text.
+ */
+
+:root {
+  --papier: #f7f9fd;
+  --karo: #e2e8f4;
+  --blatt: #ffffff;
+  --tinte: #18213b;
+  --leise: #5a6582;
+  --linie: #cdd5e6;
+  --akzent: #2346c8;
+  --akzent-text: #ffffff;
+  --akzent-zart: #e7ecfc;
+  --teil: #5b7cf0;
+  --teil-leer: #ffffff;
+  --p-rot: #e0442f;
+  --p-blau: #2f6fdb;
+  --gut: #17733f;
+  --gut-zart: #e2f3e8;
+  --fehler: #c0362c;
+  --fehler-zart: #fbe7e4;
+  --fast: #8a5a00;
+  --fast-zart: #fdf1d6;
+  --marker: #ffe36e;
+  --stern: #f2b200;
+
+  --k-tomate: #e5533d;
+  --k-ozean: #2b7bd6;
+  --k-wiese: #2f9a4e;
+  --k-sonne: #d99a00;
+  --k-flieder: #8a5cd6;
+  --k-lagune: #12898b;
+
+  --schrift-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --schrift-text: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --schrift-hand: 'Caveat', 'Comic Sans MS', 'Segoe Print', cursive;
+
+  --radius: 12px;
+  --schatten: 0 1px 0 var(--linie), 0 6px 18px -12px rgba(24, 33, 59, 0.35);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --papier: #0f1528;
+    --karo: #18203a;
+    --blatt: #161e36;
+    --tinte: #e9edf8;
+    --leise: #9ba6c6;
+    --linie: #2b3659;
+    --akzent: #8fa6ff;
+    --akzent-text: #0f1528;
+    --akzent-zart: #1f2a52;
+    --teil: #7891f5;
+    --teil-leer: #1d2643;
+    --p-rot: #ff6a55;
+    --p-blau: #5c95ff;
+    --gut: #63d394;
+    --gut-zart: #14321f;
+    --fehler: #ff8e82;
+    --fehler-zart: #3a1a17;
+    --fast: #f2c25b;
+    --fast-zart: #3a2c0d;
+    --marker: #6a5714;
+    --stern: #f5c542;
+    --k-tomate: #ff7a66;
+    --k-ozean: #6aaeff;
+    --k-wiese: #5fd08a;
+    --k-sonne: #f5c542;
+    --k-flieder: #b694ff;
+    --k-lagune: #4fd1d3;
+    --schatten: 0 1px 0 var(--linie), 0 8px 20px -14px rgba(0, 0, 0, 0.8);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --papier: #0f1528;
+  --karo: #18203a;
+  --blatt: #161e36;
+  --tinte: #e9edf8;
+  --leise: #9ba6c6;
+  --linie: #2b3659;
+  --akzent: #8fa6ff;
+  --akzent-text: #0f1528;
+  --akzent-zart: #1f2a52;
+  --teil: #7891f5;
+  --teil-leer: #1d2643;
+  --p-rot: #ff6a55;
+  --p-blau: #5c95ff;
+  --gut: #63d394;
+  --gut-zart: #14321f;
+  --fehler: #ff8e82;
+  --fehler-zart: #3a1a17;
+  --fast: #f2c25b;
+  --fast-zart: #3a2c0d;
+  --marker: #6a5714;
+  --stern: #f5c542;
+  --k-tomate: #ff7a66;
+  --k-ozean: #6aaeff;
+  --k-wiese: #5fd08a;
+  --k-sonne: #f5c542;
+  --k-flieder: #b694ff;
+  --k-lagune: #4fd1d3;
+  --schatten: 0 1px 0 var(--linie), 0 8px 20px -14px rgba(0, 0, 0, 0.8);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--schrift-text);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--tinte);
+  background-color: var(--papier);
+  background-image:
+    linear-gradient(var(--karo) 1px, transparent 1px),
+    linear-gradient(90deg, var(--karo) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: -1px -1px;
+}
+
+html.klein body {
+  font-size: 1.25rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--schrift-display);
+  line-height: 1.15;
+  text-wrap: balance;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: clamp(1.25rem, 3.4vw, 1.5rem);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--akzent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--akzent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+mark {
+  color: inherit;
+  background: linear-gradient(transparent 45%, var(--marker) 45%, var(--marker) 92%, transparent 92%);
+  padding: 0 0.12em;
+  font-weight: 700;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.leise {
+  color: var(--leise);
+}
+
+.lead {
+  color: var(--leise);
+  font-size: 1.1rem;
+  max-width: 62ch;
+}
+
+.etikett {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--akzent);
+}
+
+/* ---------- Kopfzeile ---------- */
+
+.kopfzeile {
+  background: var(--blatt);
+  border-bottom: 1px solid var(--linie);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.kopfzeile-innen {
+  max-width: 920px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.marke {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--tinte);
+  text-decoration: none;
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  min-width: 0;
+}
+
+.marke > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .kopfzeile:has(.profil-chip) .marke > span {
+    display: none;
+  }
+}
+
+.marke-logo {
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
+
+.logo-grund {
+  fill: var(--akzent-zart);
+  stroke: var(--tinte);
+  stroke-width: 2;
+}
+
+.logo-rot {
+  fill: var(--p-rot);
+}
+
+.logo-blau {
+  fill: var(--p-blau);
+}
+
+.logo-leer {
+  fill: var(--blatt);
+  stroke: var(--tinte);
+  stroke-width: 1.5;
+}
+
+.kopf-profil {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+
+.profil-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--tinte);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.kopf-link {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* ---------- Seite ---------- */
+
+.seite {
+  max-width: 920px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 24px calc(48px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.seite:focus {
+  outline: none;
+}
+
+.seite > * {
+  min-width: 0;
+}
+
+.abschnitt {
+  margin-top: 8px;
+}
+
+.zurueck {
+  align-self: flex-start;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.leise-zeile {
+  color: var(--leise);
+  font-size: 0.95rem;
+}
+
+/* ---------- Knöpfe ---------- */
+
+.knopfreihe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.knopfreihe.mitte {
+  justify-content: center;
+}
+
+.knopf {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 46px;
+  padding: 10px 18px;
+  border: 2px solid var(--linie);
+  border-radius: var(--radius);
+  background: var(--blatt);
+  color: var(--tinte);
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.1s;
+  touch-action: manipulation;
+}
+
+.knopf:hover {
+  border-color: var(--akzent);
+}
+
+.knopf:active {
+  transform: translateY(1px);
+}
+
+.knopf:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+.knopf.primaer {
+  background: var(--akzent);
+  border-color: var(--akzent);
+  color: var(--akzent-text);
+}
+
+.knopf.primaer:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.knopf.gross {
+  min-height: 56px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+}
+
+html.klein .knopf.gross {
+  min-height: 64px;
+  font-size: 1.25rem;
+}
+
+.knopf.leise {
+  border-color: transparent;
+  background: transparent;
+  color: var(--leise);
+}
+
+.knopf.leise:hover {
+  color: var(--akzent);
+}
+
+.knopf.klein {
+  min-height: 40px;
+  padding: 6px 14px;
+  font-size: 0.92rem;
+}
+
+.knopf.gefahr {
+  background: var(--fehler);
+  border-color: var(--fehler);
+  color: var(--blatt);
+}
+
+.knopf.rund {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.knopf svg,
+.vorlese-knopf svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+
+.knopf svg .welle,
+.vorlese-knopf svg .welle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.segment {
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--linie);
+  border-radius: 999px;
+  background: var(--blatt);
+  align-self: flex-start;
+}
+
+.segment button,
+.segment-teil span {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--leise);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 6px 14px;
+  min-height: 38px;
+  min-width: 42px;
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.segment button[aria-pressed='true'],
+.segment-teil input:checked + span {
+  background: var(--akzent);
+  color: var(--akzent-text);
+}
+
+.segment-teil {
+  position: relative;
+}
+
+.segment-teil input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.segment-teil input:focus-visible + span {
+  outline: 3px solid var(--akzent);
+  outline-offset: 1px;
+}
+
+/* ---------- Karten ---------- */
+
+.karte {
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+  box-shadow: var(--schatten);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+@media (min-width: 600px) {
+  .karte {
+    padding: 24px 28px;
+  }
+}
+
+.karte-kopf {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--leise);
+}
+
+.tag {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--akzent);
+}
+
+.nr {
+  font-variant-numeric: tabular-nums;
+}
+
+.hinweis-karte {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 20px;
+  background: var(--blatt);
+  border: 1px dashed var(--linie);
+  border-radius: var(--radius);
+}
+
+/* ---------- Avatare & Profile ---------- */
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--kf, var(--k-ozean));
+  color: #fff;
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.avatar.gross {
+  width: 84px;
+  height: 84px;
+  font-size: 2.6rem;
+}
+
+.f-tomate {
+  --kf: var(--k-tomate);
+}
+.f-ozean {
+  --kf: var(--k-ozean);
+}
+.f-wiese {
+  --kf: var(--k-wiese);
+}
+.f-sonne {
+  --kf: var(--k-sonne);
+}
+.f-flieder {
+  --kf: var(--k-flieder);
+}
+.f-lagune {
+  --kf: var(--k-lagune);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .avatar {
+    color: #10162a;
+  }
+}
+
+:root[data-theme='dark'] .avatar {
+  color: #10162a;
+}
+
+.start {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  text-align: center;
+  padding-top: 12px;
+}
+
+.profil-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 14px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.profil-kachel {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 14px;
+  border: 2px solid var(--linie);
+  border-radius: 18px;
+  background: var(--blatt);
+  color: var(--tinte);
+  font: inherit;
+  cursor: pointer;
+  box-shadow: var(--schatten);
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.profil-kachel:hover {
+  border-color: var(--kf, var(--akzent));
+  transform: translateY(-3px);
+}
+
+.profil-name {
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+.profil-klasse {
+  color: var(--leise);
+  font-size: 0.95rem;
+}
+
+.einrichtung {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mini-profile {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+
+.mini-profile li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Formulare ---------- */
+
+.profil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.feld {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.feld-name {
+  font-weight: 700;
+  padding: 0;
+}
+
+.feld-hilfe {
+  color: var(--leise);
+  font-size: 0.88rem;
+  font-weight: 400;
+}
+
+.feld input[type='text'],
+.ein-zahl {
+  font: inherit;
+  font-size: 1.15rem;
+  padding: 10px 12px;
+  border: 2px solid var(--linie);
+  border-radius: 10px;
+  background: var(--papier);
+  color: var(--tinte);
+  max-width: 320px;
+}
+
+.feld input[type='text']:focus,
+.ein-zahl:focus,
+.bruch-eingabe input:focus {
+  outline: none;
+  border-color: var(--akzent);
+  box-shadow: 0 0 0 3px var(--akzent-zart);
+}
+
+.farb-wahl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.farbe {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--kf);
+  cursor: pointer;
+}
+
+.farbe input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.farbe:has(input:checked) {
+  box-shadow: 0 0 0 3px var(--blatt), 0 0 0 6px var(--tinte);
+}
+
+.farbe:has(input:focus-visible) {
+  outline: 3px solid var(--akzent);
+  outline-offset: 6px;
+}
+
+.schalter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.schalter input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--akzent);
+}
+
+.formular-fehler {
+  color: var(--fehler);
+  font-weight: 700;
+}
+
+/* ---------- Kind: Start ---------- */
+
+.kind-start {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.start-karten {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 700px) {
+  .start-karten {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.weiter-karte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--blatt);
+  border: 3px solid var(--akzent);
+  color: var(--tinte);
+  text-decoration: none;
+  box-shadow: var(--schatten);
+}
+
+.weiter-karte .knopf {
+  margin-top: 10px;
+}
+
+.weiter-titel {
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  line-height: 1.15;
+}
+
+.weiter-stufe {
+  color: var(--leise);
+  font-size: 1.05rem;
+}
+
+.wdh-karte {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--blatt);
+  border: 2px solid var(--linie);
+  color: var(--tinte);
+  text-decoration: none;
+}
+
+.wdh-karte:hover {
+  border-color: var(--akzent);
+}
+
+.wdh-zahl {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--marker);
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--tinte);
+}
+
+.wdh-karte.leise .wdh-zahl {
+  background: var(--gut-zart);
+  color: var(--gut);
+}
+
+.themen {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 12px;
+}
+
+.thema-karte {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  height: 100%;
+  padding: 16px;
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+  color: var(--tinte);
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.thema-karte:hover {
+  border-color: var(--akzent);
+  transform: translateY(-2px);
+}
+
+.thema-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.thema-bereich {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--akzent);
+}
+
+.thema-titel {
+  font-family: var(--schrift-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.thema-kurz {
+  color: var(--leise);
+  font-size: 0.95rem;
+}
+
+.thema-stand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex: none;
+}
+
+.thema-zahl {
+  font-size: 0.85rem;
+  color: var(--leise);
+  font-variant-numeric: tabular-nums;
+}
+
+.stufen-punkte {
+  display: flex;
+  gap: 4px;
+}
+
+.sp {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--linie);
+}
+
+.sp.f1 {
+  border-color: var(--stern);
+}
+
+.sp.f2 {
+  border-color: var(--stern);
+  background: linear-gradient(90deg, var(--stern) 50%, transparent 50%);
+}
+
+.sp.f3 {
+  border-color: var(--stern);
+  background: var(--stern);
+}
+
+/* ---------- Thema ---------- */
+
+.thema-kopf {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stufen-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stufe {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+}
+
+.stufe.naechstes {
+  border: 2px solid var(--akzent);
+}
+
+.stufe-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.stufe-titel {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.stufe-stand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stufe-knoepfe {
+  display: flex;
+  gap: 8px;
+}
+
+.sterne {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.stern {
+  width: 22px;
+  height: 22px;
+  fill: transparent;
+  stroke: var(--stern);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.stern.voll {
+  fill: var(--stern);
+}
+
+.pille {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--karo);
+  color: var(--leise);
+}
+
+.p-uebt {
+  background: var(--akzent-zart);
+  color: var(--akzent);
+}
+
+.p-fast {
+  background: var(--fast-zart);
+  color: var(--fast);
+}
+
+.p-sitzt {
+  background: var(--gut-zart);
+  color: var(--gut);
+}
+
+.p-wiederholen {
+  background: var(--marker);
+  color: var(--tinte);
+}
+
+.p-naechstes {
+  background: var(--akzent);
+  color: var(--akzent-text);
+}
+
+/* ---------- Lernpfad ---------- */
+
+.pfad {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--leise);
+}
+
+.pfad li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.pfad li span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--linie);
+  background: var(--blatt);
+  font-variant-numeric: tabular-nums;
+}
+
+.pfad li.aktiv {
+  color: var(--akzent);
+}
+
+.pfad li.aktiv span {
+  border-color: var(--akzent);
+  background: var(--akzent);
+  color: var(--akzent-text);
+}
+
+.pfad li.erledigt span {
+  border-color: var(--gut);
+  color: var(--gut);
+}
+
+.erklaerkarte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 24px 20px;
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: 18px;
+  box-shadow: var(--schatten);
+  text-align: center;
+}
+
+.karten-zaehler {
+  align-self: flex-end;
+  color: var(--leise);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.erklaer-text {
+  font-size: 1.25rem;
+  max-width: 34ch;
+}
+
+html.klein .erklaer-text {
+  font-size: 1.45rem;
+}
+
+.merke {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  background: var(--akzent-zart);
+  border: 2px solid var(--akzent);
+  border-radius: var(--radius);
+  font-size: 1.1rem;
+}
+
+.regel-gross,
+.mathe-zeile {
+  font-size: 1.35rem;
+  overflow-x: auto;
+  padding-block: 4px;
+}
+
+.regel-bsp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.regel-bsp .bild-svg {
+  width: 120px;
+}
+
+.regel-bsp .regel-gross {
+  font-size: 2rem;
+}
+
+.fliesstext {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 68ch;
+}
+
+.fliesstext h3 {
+  margin-top: 8px;
+}
+
+.fliesstext ul,
+.fehler-karte ul,
+.prinzipien {
+  margin: 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tipp {
+  padding: 12px 16px;
+  border-left: 4px solid var(--marker);
+  background: var(--blatt);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.fehler-karte {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border: 2px dashed var(--fehler);
+  border-radius: var(--radius);
+  background: var(--blatt);
+}
+
+.fehler-karte h2,
+.fehler-karte h3 {
+  color: var(--fehler);
+}
+
+.bild-paar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  align-items: flex-end;
+}
+
+.bild-paar figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.bild-paar .bild-svg {
+  width: 200px;
+}
+
+.labor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+}
+
+.labor-flaeche {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 32px;
+}
+
+.labor-regler {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.regler {
+  display: grid;
+  grid-template-columns: 4.5em 44px 2.5em 44px;
+  align-items: center;
+  gap: 6px;
+}
+
+.regler-name {
+  font-weight: 700;
+  color: var(--leise);
+}
+
+.regler button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--linie);
+  background: var(--blatt);
+  color: var(--tinte);
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.regler output {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.labor-bruch {
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 3.4rem;
+}
+
+.labor .bild-svg {
+  width: min(100%, 330px);
+}
+
+/* ---------- Aufgaben ---------- */
+
+.auftrag {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.frage {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+html.klein .frage {
+  font-size: 1.4rem;
+}
+
+.vorlese-knopf {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--linie);
+  background: var(--blatt);
+  color: var(--akzent);
+  cursor: pointer;
+}
+
+.vorlese-knopf:hover {
+  border-color: var(--akzent);
+}
+
+.rechnung {
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
+  font-weight: 700;
+  text-align: center;
+  padding-block: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+html.klein .rechnung {
+  font-size: clamp(2.4rem, 11vw, 3.4rem);
+  font-family: var(--schrift-display);
+}
+
+.bild {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.bild-reihe {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px 28px;
+  max-width: 100%;
+}
+
+.bild-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.bild-svg path,
+.bild-svg rect,
+.bild-svg circle {
+  stroke: var(--tinte);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.t-voll {
+  fill: var(--teil);
+}
+
+.t-leer {
+  fill: var(--teil-leer);
+}
+
+/* Plättchenfelder */
+.feld .feld-rahmen {
+  fill: var(--blatt);
+  stroke: var(--tinte);
+  stroke-width: 2;
+}
+
+.feld .feld-trenner {
+  stroke: var(--tinte);
+  stroke-width: 2;
+}
+
+.feld .p-rot {
+  fill: var(--p-rot);
+  stroke: none;
+}
+
+.feld .p-blau {
+  fill: var(--p-blau);
+  stroke: none;
+}
+
+.feld .p-leer {
+  fill: transparent;
+  stroke: var(--linie);
+  stroke-width: 2;
+}
+
+.feld .p-ziel {
+  fill: transparent;
+  stroke: var(--p-blau);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.feld .p-weg {
+  fill: var(--p-rot);
+  opacity: 0.35;
+  stroke: none;
+}
+
+.feld .p-kreuz {
+  stroke: var(--tinte);
+  stroke-width: 3;
+  stroke-linecap: round;
+  fill: none;
+}
+
+/* Zahlenhaus */
+.haus .haus-dach {
+  fill: var(--akzent-zart);
+  stroke: var(--tinte);
+  stroke-width: 2.5;
+}
+
+.haus .haus-wand {
+  fill: var(--blatt);
+  stroke: var(--tinte);
+  stroke-width: 2.5;
+}
+
+.haus .haus-linie {
+  stroke: var(--tinte);
+  stroke-width: 2.5;
+}
+
+.haus .haus-luecke {
+  fill: var(--marker);
+  stroke: var(--tinte);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+}
+
+.haus-text {
+  fill: var(--tinte);
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 34px;
+  text-anchor: middle;
+}
+
+/* Brüche */
+.fr {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0 0.12em;
+  line-height: 1.12;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+.fr > span {
+  padding: 0.04em 0.22em;
+}
+
+.fr-z {
+  border-bottom: 0.08em solid currentColor;
+}
+
+.gz,
+.kette {
+  white-space: nowrap;
+}
+
+.gz {
+  display: inline-flex;
+  align-items: center;
+}
+
+.op {
+  display: inline-block;
+  margin: 0 0.35em;
+}
+
+.luecke {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  margin: 0 0.4em;
+  border: 2px dashed var(--akzent);
+  border-radius: 8px;
+  color: var(--akzent);
+  vertical-align: middle;
+  font-size: 0.9em;
+}
+
+/* Stellenwerttafel & schriftliches Rechnen */
+.tabelle-rahmen {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.stellentafel {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.2rem;
+}
+
+.stellentafel th,
+.stellentafel td {
+  border: 1px solid var(--linie);
+  padding: 4px 12px;
+  text-align: center;
+}
+
+.stellentafel th {
+  color: var(--leise);
+  font-size: 0.85rem;
+}
+
+.stellentafel .komma-rechts {
+  border-right: 3px solid var(--akzent);
+}
+
+.schriftlich {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.3rem;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+.schriftlich td {
+  padding: 0 6px;
+  text-align: right;
+}
+
+.schriftlich .s-op {
+  color: var(--leise);
+}
+
+.schriftlich .s-strich td {
+  border-top: 2px solid var(--tinte);
+  height: 4px;
+}
+
+/* ---------- Eingabe ---------- */
+
+.antwort {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 14px 20px;
+}
+
+.ein-zahl {
+  width: 8ch;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.bruch-eingabe {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bruch-eingabe input {
+  width: 4.2ch;
+  font: inherit;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 6px 4px;
+  border: 2px solid var(--linie);
+  border-radius: 8px;
+  background: var(--papier);
+  color: var(--tinte);
+  font-variant-numeric: tabular-nums;
+}
+
+.bruch-eingabe input[readonly] {
+  border-color: transparent;
+  background: transparent;
+}
+
+.ganze-feld {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ganze-feld span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--leise);
+}
+
+.ein-bruch {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.ein-bruch .strich {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--tinte);
+}
+
+.eingabe-hilfe {
+  font-size: 0.9rem;
+  color: var(--leise);
+  text-align: center;
+}
+
+.zahl-eingabe.klein {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.anzeige {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4ch;
+  min-height: 72px;
+  padding: 4px 18px;
+  border: 3px solid var(--akzent);
+  border-radius: 14px;
+  background: var(--papier);
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 3rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tastenfeld {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 76px));
+  gap: 10px;
+}
+
+.taste {
+  appearance: none;
+  height: 64px;
+  border: 2px solid var(--linie);
+  border-radius: 14px;
+  background: var(--blatt);
+  color: var(--tinte);
+  font-family: var(--schrift-display);
+  font-size: 1.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 3px 0 var(--linie);
+}
+
+.taste:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--linie);
+}
+
+.taste:disabled {
+  opacity: 0.4;
+}
+
+.taste-neben {
+  color: var(--leise);
+}
+
+.taste-ok {
+  background: var(--gut);
+  border-color: var(--gut);
+  color: var(--blatt);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--gut) 60%, black);
+}
+
+.auswahl {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.auswahl.gross .auswahl-knopf {
+  width: 76px;
+  height: 68px;
+  font-size: 2rem;
+  font-family: var(--schrift-display);
+}
+
+/* ---------- Rückmeldung ---------- */
+
+.rueckmeldung:empty {
+  display: none;
+}
+
+.meldung {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 2px solid currentColor;
+  animation: auftauchen 0.25s ease-out;
+}
+
+.meldung p {
+  color: var(--tinte);
+}
+
+.meldung .leise {
+  color: var(--leise);
+}
+
+.meldung-titel {
+  font-family: var(--schrift-hand);
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.meldung.ok {
+  color: var(--gut);
+  background: var(--gut-zart);
+}
+
+.meldung.falsch {
+  color: var(--fehler);
+  background: var(--fehler-zart);
+}
+
+.meldung.fast {
+  color: var(--fast);
+  background: var(--fast-zart);
+}
+
+.meldung.info {
+  color: var(--linie);
+  background: var(--papier);
+}
+
+/* ---------- Lösungswege ---------- */
+
+.schritte {
+  list-style: none;
+  counter-reset: schritt;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.schritte li {
+  counter-increment: schritt;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 8px;
+  animation: auftauchen 0.3s ease-out;
+}
+
+.schritte li::before {
+  content: counter(schritt);
+  grid-row: span 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--akzent-zart);
+  color: var(--akzent);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.schritte li p {
+  padding-top: 3px;
+}
+
+.mathe {
+  grid-column: 2;
+  font-size: 1.2rem;
+  line-height: 2.2;
+  padding: 6px 14px;
+  border-left: 2px solid var(--linie);
+  overflow-x: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes auftauchen {
+  from {
+    opacity: 0.2;
+    transform: translateY(6px);
+  }
+}
+
+.ergebnis {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 12px 16px;
+  border: 2px solid var(--gut);
+  border-radius: var(--radius);
+  background: var(--gut-zart);
+}
+
+.ergebnis .etikett {
+  color: var(--gut);
+}
+
+.ergebnis-mathe {
+  font-size: 1.5rem;
+  font-weight: 700;
+  overflow-x: auto;
+}
+
+.loesungsweg {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 2px dashed var(--linie);
+  scroll-margin-top: 16px;
+}
+
+/* ---------- Runde ---------- */
+
+.runde-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.runde-kopf .knopf {
+  white-space: nowrap;
+  flex: none;
+}
+
+.runde-leiste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rl {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--linie);
+  background: var(--blatt);
+}
+
+.rl.aktiv {
+  border-color: var(--akzent);
+  box-shadow: 0 0 0 3px var(--akzent-zart);
+}
+
+.rl.ok {
+  background: var(--gut);
+  border-color: var(--gut);
+}
+
+.rl.nein {
+  background: var(--fehler);
+  border-color: var(--fehler);
+}
+
+.runde-ende {
+  align-items: flex-start;
+}
+
+.ende-zahl {
+  font-size: 1.3rem;
+}
+
+.ende-zahl b {
+  font-family: var(--schrift-display);
+  font-size: 2.6rem;
+}
+
+.aenderungen {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.aenderungen li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--linie);
+}
+
+/* ---------- Eltern ---------- */
+
+.eltern-abschnitt {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.eltern-profile {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eltern-profil {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+}
+
+.ep-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 140px;
+}
+
+.bestaetigen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 2px solid var(--fehler);
+  border-radius: var(--radius);
+  background: var(--fehler-zart);
+}
+
+.bestaetigen.inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.kacheln {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+}
+
+.kachel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--blatt);
+  border: 1px solid var(--linie);
+  border-radius: var(--radius);
+  color: var(--leise);
+  font-size: 0.85rem;
+}
+
+.kachel-zahl {
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--tinte);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.lernstand {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--blatt);
+  font-size: 0.92rem;
+  min-width: 620px;
+}
+
+.lernstand th,
+.lernstand td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--linie);
+  text-align: left;
+  vertical-align: top;
+}
+
+.lernstand th {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--leise);
+}
+
+.lernstand .zahl {
+  font-variant-numeric: tabular-nums;
+}
+
+.lernstand .stern {
+  width: 16px;
+  height: 16px;
+}
+
+.datei-knopf {
+  position: relative;
+}
+
+.sperre {
+  max-width: 480px;
+  align-self: center;
+  width: 100%;
+}
+
+.sperre .rechnung {
+  font-size: 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

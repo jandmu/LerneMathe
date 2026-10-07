@@ -1,0 +1,12 @@
+{
+  "name": "Mathewerkstatt",
+  "short_name": "Mathewerkstatt",
+  "description": "Mathe lernen und üben für die Klassen 1 bis 6.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f9fd",
+  "theme_color": "#2346c8",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

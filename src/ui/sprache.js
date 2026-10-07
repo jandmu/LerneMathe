@@ -7,6 +7,7 @@
  */
 
 let alleStimmen = [];
+let anzahlGesamt = 0;
 let gewuenscht = null; // voiceURI aus den Geräte-Einstellungen
 let tempo = 0.95;
 const beobachter = new Set();
@@ -26,12 +27,18 @@ export function bewerten(v) {
   return p;
 }
 
-function laden() {
+function lesen() {
   try {
-    alleStimmen = window.speechSynthesis.getVoices().filter((v) => /^de(-|_|$)/i.test(v.lang));
+    const alle = window.speechSynthesis.getVoices();
+    anzahlGesamt = alle.length;
+    alleStimmen = alle.filter((v) => /^de(-|_|$)/i.test(v.lang));
   } catch (e) {
     alleStimmen = [];
   }
+}
+
+function laden() {
+  lesen();
   beobachter.forEach((f) => f());
 }
 
@@ -46,11 +53,26 @@ if (kannSprechen()) {
   } catch (e) {
     window.speechSynthesis.onvoiceschanged = laden;
   }
+  // Nach dem Installieren einer Stimme in den Einstellungen kommt man meist per App-Wechsel zurück.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') laden();
+  });
 }
 
 /** Deutsche Stimmen, die natürlichsten zuerst. */
 export function deutscheStimmen() {
+  if (kannSprechen()) lesen();
   return alleStimmen.slice().sort((a, b) => bewerten(b) - bewerten(a));
+}
+
+/** Für die Diagnose im Elternbereich: wie viele Stimmen meldet der Browser insgesamt? */
+export function stimmenGesamt() {
+  return anzahlGesamt;
+}
+
+/** Liest die Stimmen neu ein (z. B. nach dem Installieren einer Stimme). */
+export function neuLaden() {
+  if (kannSprechen()) laden();
 }
 
 /** Meldet sich, wenn der Browser seine Stimmen (nach)geladen hat. Gibt eine Abmeldefunktion zurück. */

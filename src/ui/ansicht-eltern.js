@@ -8,7 +8,7 @@ import { FEHLERBILDER } from '../core/aufgabe.js';
 import { THEMEN, skillId, skillsFuerKlasse } from '../inhalte/index.js';
 import { avatar, sterne, statusPille } from './bausteine.js';
 import { profilFormular, profilLesen, profilFormularBinden } from './profilformular.js';
-import { deutscheStimmen, beiStimmenGeladen, einstellen, sprich, kannSprechen, aktuelleStimme } from './sprache.js';
+import { deutscheStimmen, beiStimmenGeladen, einstellen, sprich, kannSprechen, aktuelleStimme, stimmenGesamt, neuLaden } from './sprache.js';
 
 const TEMPI = [
   ['0.8', 'Langsam'],
@@ -108,6 +108,10 @@ export async function zeigeEltern(app) {
         stimmeZeigen();
         sprich('Wie viel ist acht plus fünf?');
       },
+      'stimmen-neu'() {
+        neuLaden();
+        stimmeZeigen();
+      },
       probe() {
         sprich('Hallo! Wie viel ist acht plus fünf? Fülle zuerst bis zur Zehn auf.');
       },
@@ -180,21 +184,24 @@ export async function zeigeEltern(app) {
       return;
     }
     const liste = deutscheStimmen();
+    const diagnose = `<p class="leise">Der Browser meldet ${liste.length} deutsche ${liste.length === 1 ? 'Stimme' : 'Stimmen'} (${stimmenGesamt()} insgesamt).
+      <button type="button" class="knopf klein leise" data-action="stimmen-neu">Neu suchen</button></p>`;
     if (!liste.length) {
-      el.innerHTML = '<p>Auf diesem Gerät wurde noch keine deutsche Stimme gefunden. Siehe Anleitung unten.</p>';
+      el.innerHTML = '<p>Auf diesem Gerät wurde noch keine deutsche Stimme gefunden. Siehe Anleitung unten.</p>' + diagnose;
       return;
     }
     const aktiv = aktuelleStimme();
     const tempo = String(geraet.tempo || 0.95);
     el.innerHTML = `<label class="feld"><span class="feld-name">Stimme</span>
         <select id="stimme">${liste
-          .map((v, i) => `<option value="${esc(v.voiceURI)}" ${aktiv && v.voiceURI === aktiv.voiceURI ? 'selected' : ''}>${esc(v.name)}${i === 0 ? ' – empfohlen' : ''}</option>`)
+          .map((v, i) => `<option value="${esc(v.voiceURI)}" ${aktiv && v.voiceURI === aktiv.voiceURI ? 'selected' : ''}>${esc(v.name)}${v.localService === false ? ' (online)' : ''}${i === 0 ? ' – empfohlen' : ''}</option>`)
           .join('')}</select></label>
       <div class="feld"><span class="feld-name">Sprechtempo</span>
         <div class="segment" role="group" aria-label="Sprechtempo">${TEMPI.map(
           ([w, n]) => `<button type="button" data-action="tempo" data-wert="${w}" aria-pressed="${Number(w) === Number(tempo)}">${n}</button>`
         ).join('')}</div></div>
-      <div class="knopfreihe"><button type="button" class="knopf" data-action="probe">Probe hören</button></div>`;
+      <div class="knopfreihe"><button type="button" class="knopf" data-action="probe">Probe hören</button></div>
+      ${diagnose}`;
     el.querySelector('#stimme').addEventListener('change', async (ev) => {
       geraet.stimme = ev.target.value;
       await geraetSichern();

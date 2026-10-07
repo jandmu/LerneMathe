@@ -145,12 +145,20 @@ export function rundePlanen({ skillIds, f, fokus = null, anzahl = 8, jetzt }) {
 
 /** Mischt so, dass möglichst nie dieselbe Fertigkeit dreimal hintereinander kommt. */
 export function verschraenken(plan) {
-  const a = mischen(plan);
-  for (let i = 2; i < a.length; i++) {
-    if (a[i] === a[i - 1] && a[i] === a[i - 2]) {
-      const j = a.findIndex((x, k) => k > i && x !== a[i]);
-      if (j > 0) [a[i], a[j]] = [a[j], a[i]];
-    }
+  const rest = new Map();
+  for (const id of mischen(plan)) rest.set(id, (rest.get(id) || 0) + 1);
+  const aus = [];
+  while (aus.length < plan.length) {
+    const n = aus.length;
+    const gesperrt = n >= 2 && aus[n - 1] === aus[n - 2] ? aus[n - 1] : null;
+    const kandidaten = [...rest.entries()].filter(([id, k]) => k > 0 && id !== gesperrt);
+    const auswahl = kandidaten.length ? kandidaten : [...rest.entries()].filter(([, k]) => k > 0);
+    // Die häufigste verbleibende Fertigkeit zuerst, damit am Ende keine lange Serie übrig bleibt.
+    const max = Math.max(...auswahl.map(([, k]) => k));
+    const beste = auswahl.filter(([, k]) => k === max);
+    const [id] = beste[Math.floor(Math.random() * beste.length)];
+    aus.push(id);
+    rest.set(id, rest.get(id) - 1);
   }
-  return a;
+  return aus;
 }

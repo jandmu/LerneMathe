@@ -22,6 +22,10 @@ import { ggT } from './util.js';
 export const FEHLERBILDER = {
   allgemein: 'Sonstiger Fehler',
   'um-eins': 'Um 1 daneben (verzählt)',
+  zahlendreher: 'Zahlendreher (z. B. 31 statt 13)',
+  'ziffer-richtung': 'Ziffer in falscher Richtung geschrieben',
+  'ziffer-start': 'Ziffer am falschen Punkt begonnen',
+  'ziffer-ungenau': 'Ziffer ungenau nachgespurt',
   'plus-statt-minus': 'Plus statt Minus gerechnet',
   'minus-statt-plus': 'Minus statt Plus gerechnet',
   'zusammengezaehlt': 'Zerlegung: Zahlen zusammengezählt statt ergänzt',

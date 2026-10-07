@@ -2113,3 +2113,159 @@ html.klein .rechnung {
     transition: none !important;
   }
 }
+
+/* ---------- Ziffern nachspuren ---------- */
+
+.spur-eingabe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.spur-feld {
+  width: min(78vw, 300px);
+}
+
+.spur-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--blatt);
+  border: 2px solid var(--linie);
+  border-radius: 14px;
+}
+
+.spur-svg.interaktiv {
+  touch-action: none;
+  cursor: crosshair;
+  border-color: var(--akzent);
+}
+
+.spur-klein {
+  width: 120px;
+}
+
+.spur-linie {
+  stroke: var(--linie);
+  stroke-width: 0.8;
+}
+
+.spur-linie.mitte {
+  stroke-dasharray: 3 3;
+}
+
+.spur-fuehrung {
+  fill: none;
+  stroke: var(--akzent-zart);
+  stroke-width: 13;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.spur-fuehrung.wenig {
+  stroke: var(--karo);
+  stroke-width: 9;
+}
+
+.spur-pfeil {
+  fill: var(--akzent);
+}
+
+.spur-start {
+  fill: var(--gut);
+}
+
+.spur-nr {
+  fill: var(--blatt);
+  font-family: var(--schrift-text);
+  font-weight: 700;
+  font-size: 8px;
+  text-anchor: middle;
+}
+
+.spur-demo {
+  fill: none;
+  stroke: var(--p-rot);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+.spur-strich {
+  fill: none;
+  stroke: var(--tinte);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ziffer-gross {
+  font-family: var(--schrift-display);
+  font-weight: 800;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.stellen {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Zahlendiktat ---------- */
+
+.hoeren {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.hoer-knopf {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 28px;
+  border: 3px solid var(--akzent);
+  border-radius: 999px;
+  background: var(--akzent-zart);
+  color: var(--akzent);
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.hoer-knopf svg {
+  width: 40px;
+  height: 40px;
+  fill: currentColor;
+}
+
+.hoer-knopf svg .welle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.wort-hilfe {
+  color: var(--leise);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.wort-hilfe summary {
+  cursor: pointer;
+}
+
+.wort-hilfe p {
+  font-size: 1.3rem;
+  color: var(--tinte);
+  font-weight: 700;
+}

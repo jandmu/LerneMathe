@@ -168,6 +168,7 @@ export function zeigeLernen(app, themaId, stufeId) {
           z.beispiel = null;
           zeichnen();
         },
+        vorlesen: () => app.sprich(vorleseText(a), true),
         'jetzt-du'() {
           z.phase = 'mitmachen';
           z.mit = null;
@@ -175,7 +176,7 @@ export function zeigeLernen(app, themaId, stufeId) {
         },
       }
     );
-    if (!z.sichtbar) app.sprich(vorleseText(a));
+    if (!z.sichtbar) app.sprich(vorleseText(a), a.immerVorlesen);
   }
 
   // ---------- 3. Mitmachen ----------
@@ -236,7 +237,7 @@ export function zeigeLernen(app, themaId, stufeId) {
         }
         mitmachen();
       });
-      if (!m.meldung) app.sprich(vorleseText(a));
+      if (!m.meldung) app.sprich(vorleseText(a), a.immerVorlesen);
       eingabeFokus(karte);
     }
   }

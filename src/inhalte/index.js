@@ -12,13 +12,14 @@
  * }
  */
 import mengen from './k1/mengen.js';
+import { ziffern, diktat } from './k1/zahlenschreiben.js';
 import zerlegen from './k1/zerlegen.js';
 import plusminus10 from './k1/plusminus10.js';
 import { plus20, minus20 } from './k1/rechnen20.js';
 import { bruchThemen } from './k6/brueche.js';
 import { dezimalThemen } from './k6/dezimal.js';
 
-export const THEMEN = [mengen, zerlegen, plusminus10, plus20, minus20, ...bruchThemen, ...dezimalThemen];
+export const THEMEN = [ziffern, mengen, diktat, zerlegen, plusminus10, plus20, minus20, ...bruchThemen, ...dezimalThemen];
 
 export const KLASSEN = [1, 2, 3, 4, 5, 6];
 

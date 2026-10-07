@@ -18,3 +18,13 @@ test('Natürliche Stimmen werden bevorzugt', () => {
   assert.equal(sortiert[sortiert.length - 1], 'Flo (Deutsch (Deutschland))');
   assert.ok(bewerten(st('Florian (Enhanced)')) > bewerten(st('Anna')));
 });
+
+test('Zahlwörter', async () => {
+  const { zahlwort } = await import('../src/core/ziffern.js');
+  assert.equal(zahlwort(0), 'null');
+  assert.equal(zahlwort(13), 'dreizehn');
+  assert.equal(zahlwort(21), 'einundzwanzig');
+  assert.equal(zahlwort(37), 'siebenunddreißig');
+  assert.equal(zahlwort(60), 'sechzig');
+  assert.equal(zahlwort(99), 'neunundneunzig');
+});

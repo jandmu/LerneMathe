@@ -18,7 +18,7 @@ Läuft auf Smartphone, Tablet und Rechner – ohne Installation, ohne Konto, ohn
 
 | Klasse | Themen |
 |---|---|
-| 1 | Mengen sehen (Kraft der Fünf) · Zahlen zerlegen (Zahlenhaus, Zehnerfreunde) · Plus und Minus bis 10 · Plus bis 20 (Verdoppeln, Zehnerübergang) · Minus bis 20 |
+| 1 | Ziffern schreiben (Nachspuren mit dem Finger) · Mengen sehen (Kraft der Fünf) · Zahlen hören und schreiben (Zahlendiktat bis 100, Zahlendreher) · Zahlen zerlegen (Zahlenhaus, Zehnerfreunde) · Plus und Minus bis 10 · Plus bis 20 (Verdoppeln, Zehnerübergang) · Minus bis 20 |
 | 6 | Brüche: Grundlagen, Erweitern, Kürzen, Gemischte Zahlen, Vergleichen, Addieren, Subtrahieren, Multiplizieren, Dividieren · Dezimalzahlen: Verstehen, Vergleichen, Addieren/Subtrahieren, Mal/Geteilt durch 10, 100, 1000 |
 
 Weitere Klassen und Themen lassen sich ohne Änderung der Oberfläche ergänzen (siehe `docs/ARCHITEKTUR.md`).

@@ -3,6 +3,7 @@
  * Die Felder haben eine Lücke nach jeweils fünf Plättchen („Kraft der Fünf“), damit Kinder
  * Mengen strukturiert sehen statt einzeln abzuzählen.
  */
+import { ZIFFERN, abtasten, pfad } from './ziffern.js';
 
 /** Baut eine Liste von Zellen: zellen(10, ['rot', 4], ['blau', 3]) → 4 rot, 3 blau, 3 leer */
 export function zellen(groesse, ...gruppen) {
@@ -70,5 +71,43 @@ export function zahlenhaus(dach, links, rechts) {
     <rect class="haus-wand" x="20" y="78" width="160" height="104"/>
     <line class="haus-linie" x1="100" y1="78" x2="100" y2="182"/>
     ${zahl(dach, 100, 54)}${zahl(links, 60, 132)}${zahl(rechts, 140, 132)}
+  </svg>`;
+}
+
+// ---------- Ziffern nachspuren ----------
+
+
+function pfeil(S, anteil) {
+  const k = Math.min(S.length - 2, Math.max(1, Math.round((S.length - 1) * anteil)));
+  const [x, y] = S[k];
+  const [x2, y2] = S[k + 1];
+  const w = Math.atan2(y2 - y, x2 - x);
+  const c = Math.cos(w);
+  const s = Math.sin(w);
+  const p = (a, b) => `${(x + a * c - b * s).toFixed(1)} ${(y + a * s + b * c).toFixed(1)}`;
+  return `<path class="spur-pfeil" d="M${p(5, 0)}L${p(-3, 4)}L${p(-3, -4)}Z"/>`;
+}
+
+/**
+ * Schreibfeld mit Spur einer Ziffer.
+ * hilfe: 'voll' (Spur, Pfeile, Startpunkte) oder 'wenig' (blasse Spur, nur Startpunkte).
+ */
+export function spurBild(ziffer, hilfe = 'voll', { id = '', interaktiv = false } = {}) {
+  const striche = ZIFFERN[ziffer];
+  let fuehrung = '';
+  let marken = '';
+  striche.forEach((strich, i) => {
+    const S = abtasten(strich);
+    fuehrung += `<path class="spur-fuehrung ${hilfe}" d="${pfad(strich)}"/>`;
+    if (hilfe === 'voll') marken += pfeil(S, 0.3) + pfeil(S, 0.68);
+    const [x, y] = S[0];
+    marken += `<circle class="spur-start" cx="${x}" cy="${y}" r="6.5"/>`;
+    if (striche.length > 1) marken += `<text class="spur-nr" x="${x}" y="${y + 3}">${i + 1}</text>`;
+  });
+  return `<svg class="spur-svg${interaktiv ? ' interaktiv' : ''}" ${id ? `id="${id}"` : ''} viewBox="0 0 100 140" role="img" aria-label="Schreibspur der Ziffer ${ziffer}">
+    <line class="spur-linie" x1="0" y1="10" x2="100" y2="10"/>
+    <line class="spur-linie mitte" x1="0" y1="70" x2="100" y2="70"/>
+    <line class="spur-linie" x1="0" y1="130" x2="100" y2="130"/>
+    ${fuehrung}<g class="spur-vorfuehrung"></g>${marken}<g class="spur-kind"></g>
   </svg>`;
 }

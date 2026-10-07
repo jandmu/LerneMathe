@@ -8,6 +8,7 @@ die Tabelle zeigt, wo.
 |---|---|---|---|
 | **Vom Konkreten zum Abstrakten** (Bruner 1966; Fyfe u. a. 2014: *concreteness fading*) | Neue Inhalte zuerst handelnd/bildlich, dann symbolisch. Bilder später bewusst weglassen. | Stufen gehen von „mit Bild“ zu „ohne Bild“ (z. B. Zehnerfreunde → Zehnerfreunde ohne Bild). | `src/inhalte/k1/*` |
 | **Strukturierte Anschauung statt Abzählen** (Gaidoschik 2010; Krauthausen: „Kraft der Fünf“) | Zählendes Rechnen ist ein Hauptrisiko für Rechenschwäche. Mengen in Fünfer-/Zehnerstruktur sehen, Zerlegungen und Strategien (Verdoppeln, Zehnerübergang) lernen. | Zehner-/Zwanzigerfeld mit Fünferlücke, Zahlenhaus, Lösungswege über Zerlegung statt „zähl weiter“. | `src/core/bilder.js`, `k1/rechnen20.js` |
+| **Schreibbewegung und Zahlwort** (Longcamp u. a. 2005; Gaidoschik 2010) | Die Schreibbewegung unterstützt das Einprägen der Ziffernform. Die deutsche Zahlwortbildung („drei-zehn“) verleitet zu Zahlendrehern. | Ziffern nachspuren mit Startpunkt, Pfeilen und Vorführung, danach ins Heft. Zahlendiktat mit Erkennung von Zahlendrehern und Erklärung über Zehner und Einer. | `k1/zahlenschreiben.js`, `core/ziffern.js` |
 | **Kognitive Belastung gering halten** (Sweller 1988; Sweller u. a. 2019) | Arbeitsgedächtnis ist knapp. Ein Gedanke pro Bildschirm, nichts Überflüssiges. | Erklärkarten mit je einem Satz-Gedanken; Übungsrunden zeigen nur die eine Aufgabe. | `ansicht-lernen.js` |
 | **Modalitätsprinzip** (Mayer 2021) | Bild + gesprochener Text ist besser als Bild + Lesetext – besonders für Leseanfänger. | Vorlesen (Web Speech API), standardmäßig an für Klasse 1–2. | `src/ui/sprache.js` |
 | **Lösungsbeispiele und Ausblenden** (Renkl & Atkinson 2003; Atkinson, Renkl & Merrill 2003) | Anfänger lernen mehr aus vorgerechneten Beispielen als aus eigenem Probieren; dann schrittweise selbst übernehmen. | Lernpfad: Verstehen → Zuschauen (Schritt für Schritt) → Mitmachen (halber Weg vorgegeben) → Selbst üben. | `ansicht-lernen.js` |
@@ -31,6 +32,7 @@ die Tabelle zeigt, wo.
 - Gaidoschik, M. (2010). *Wie Kinder rechnen lernen – oder auch nicht*. Peter Lang.
 - Hattie, J., & Timperley, H. (2007). The power of feedback. *Review of Educational Research, 77*(1), 81–112.
 - Kulik, C.-L. C., Kulik, J. A., & Bangert-Drowns, R. L. (1990). Effectiveness of mastery learning programs: A meta-analysis. *Review of Educational Research, 60*(2), 265–299.
+- Longcamp, M., Zerbato-Poudou, M.-T., & Velay, J.-L. (2005). The influence of writing practice on letter recognition in preschool children: A comparison between handwriting and typing. *Acta Psychologica, 119*(1), 67–79.
 - Mayer, R. E. (2021). *Multimedia Learning* (3. Aufl.). Cambridge University Press.
 - Mueller, C. M., & Dweck, C. S. (1998). Praise for intelligence can undermine children's motivation and performance. *Journal of Personality and Social Psychology, 75*(1), 33–52.
 - Ramirez, G., Gunderson, E. A., Levine, S. C., & Beilock, S. L. (2013). Math anxiety, working memory, and math achievement in early elementary school. *Journal of Cognition and Development, 14*(2), 187–202.

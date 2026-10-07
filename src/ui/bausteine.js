@@ -38,8 +38,14 @@ export function aufgabeHTML(a, { vorlesen = false } = {}) {
   return `
     <div class="auftrag">
       <p class="frage">${a.text}</p>
-      ${vorlesen ? '<button type="button" class="vorlese-knopf" data-action="vorlesen" aria-label="Aufgabe vorlesen">' + LAUTSPRECHER + '</button>' : ''}
+      ${vorlesen && !a.immerVorlesen ? '<button type="button" class="vorlese-knopf" data-action="vorlesen" aria-label="Aufgabe vorlesen">' + LAUTSPRECHER + '</button>' : ''}
     </div>
+    ${
+      a.immerVorlesen
+        ? `<div class="hoeren"><button type="button" class="hoer-knopf" data-action="vorlesen">${LAUTSPRECHER}<span>Nochmal hören</span></button>
+           <details class="wort-hilfe"><summary>Kein Ton? Zahl als Wort zeigen</summary><p>${a.wort || ''}</p></details></div>`
+        : ''
+    }
     ${a.rechnung ? `<div class="rechnung">${a.rechnung}</div>` : ''}
     ${a.bild ? `<div class="bild">${a.bild}</div>` : ''}`;
 }

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { THEMEN, aufgabeFuer, skillId, skillsFuerKlasse, thema } from '../src/inhalte/index.js';
 import { Bruch } from '../src/core/bruch.js';
 import { zeige } from '../src/core/dezimal.js';
+import { idealStriche } from '../src/core/ziffern.js';
 
 const DURCHLAEUFE = 300;
 
@@ -11,6 +12,7 @@ function richtigeEingabe(a) {
   const art = a.eingabe.art;
   if (art === 'zahl') return String(a.loesung);
   if (art === 'auswahl') return a.loesung;
+  if (art === 'spur') return idealStriche(a.loesung);
   if (art === 'dezimal') return zeige(a.loesung).replace('−', '-');
   if (art === 'bruch') {
     const l = a.loesung;
@@ -48,6 +50,10 @@ for (const t of THEMEN) {
         if (a.eingabe.art === 'zahl') assert.ok(Number.isInteger(a.loesung) && a.loesung >= 0, 'Lösung ' + a.loesung);
         if (a.eingabe.art === 'dezimal') assert.ok(Number.isInteger(a.loesung) && a.loesung >= 0, 'Dezimallösung ' + a.loesung);
         if (a.eingabe.art === 'bruch') assert.ok(a.loesung instanceof Bruch);
+        if (a.eingabe.art === 'spur' && i < 20) {
+          const rueckwaerts = idealStriche(a.loesung).map((s) => s.slice().reverse());
+          assert.equal(a.pruefe(rueckwaerts).status, 'falsch', 'umgedrehte Ziffer wurde akzeptiert');
+        }
         const r = a.pruefe(richtigeEingabe(a));
         assert.equal(r.status, 'richtig', `${id}: richtige Antwort abgelehnt (${JSON.stringify(richtigeEingabe(a))}) – ${r.text}`);
       }
@@ -98,7 +104,23 @@ test('Fehlbilder Klasse 6: Nenner addiert, längere Dezimalzahl größer', () =>
 
 test('Skills pro Klasse in Lehrplan-Reihenfolge', () => {
   const k1 = skillsFuerKlasse(1);
-  assert.equal(k1[0], 'k1-mengen/bis5');
+  assert.equal(k1[0], 'k1-ziffern/gerade');
+  assert.ok(k1.indexOf('k1-mengen/bis5') < k1.indexOf('k1-diktat/bis10'));
   assert.ok(k1.length >= 15);
   assert.ok(skillsFuerKlasse(6).includes('k6-bruch-addieren/mittel'));
+});
+
+test('Zahlendiktat: Zahlendreher werden erkannt', () => {
+  let geprueft = 0;
+  for (let i = 0; i < 300; i++) {
+    const a = aufgabeFuer(i % 2 ? 'k1-diktat/bis20' : 'k1-diktat/bis100');
+    const n = a.loesung;
+    const z = Math.floor(n / 10);
+    const e = n % 10;
+    if (e === 0 || e === z) continue;
+    assert.equal(a.pruefe(String(e * 10 + z)).fehler, 'zahlendreher', `${n}`);
+    assert.ok(a.immerVorlesen && a.sprich && a.wort);
+    geprueft++;
+  }
+  assert.ok(geprueft > 200);
 });

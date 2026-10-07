@@ -22,6 +22,9 @@ import { zeigeEltern } from './ui/ansicht-eltern.js';
 
 const AKTIVES_PROFIL = 'mathewerkstatt:aktiv';
 
+/** Wird bei jeder Veröffentlichung hochgezählt und im Elternbereich angezeigt. */
+export const VERSION = '0.3 · 7.10.2026';
+
 const app = {
   db: new Datenbank(new LokalesBackend()),
   main: document.getElementById('inhalt'),
@@ -32,6 +35,7 @@ const app = {
   aktionen: {},
   aufraeumen: null,
 
+  version: VERSION,
   jetzt: () => Date.now(),
 
   klein() {

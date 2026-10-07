@@ -100,7 +100,8 @@ export async function zeigeEltern(app) {
         <li><b>Ohne Druck:</b> Keine Zeitlimits, keine Ranglisten. Gelobt werden Anstrengung und Rechenweg.</li>
       </ul>
     </section>
-    <p><a class="knopf" href="#/">Zur Profilauswahl</a></p>`,
+    <p><a class="knopf" href="#/">Zur Profilauswahl</a></p>
+    <p class="leise">Version ${esc(app.version || '')}</p>`,
     {
       async tempo(el) {
         geraet.tempo = Number(el.dataset.wert);

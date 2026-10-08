@@ -10,7 +10,7 @@ import { esc, wahl } from '../core/util.js';
 import { rundePlanen, antwortEintragen, rundeAuswerten, zustand } from '../core/lernplan.js';
 import { skillsFuerKlasse, skillInfo, aufgabeFuer, rundenGroesse } from '../inhalte/index.js';
 import { aufgabeHTML, schritteHTML, ergebnisBox, sterne, vorleseText } from './bausteine.js';
-import { eingabeHTML, eingabeBinden, eingabeFokus, eingabeWerte } from './eingabe.js';
+import { eingabeHTML, eingabeBinden, eingabeFokus, eingabeWerte, vorfuehren } from './eingabe.js';
 import { tagesbeginn, TAG_MS } from '../core/util.js';
 
 const LOB = ['Richtig!', 'Genau!', 'Stimmt!', 'Super gerechnet!', 'Klasse!', 'Prima!'];
@@ -34,7 +34,8 @@ export function zeigeRunde(app, fokus) {
       if (!r.gesehen.has(a.schluessel)) break;
     }
     r.gesehen.add(a.schluessel);
-    r.c = { a, versuche: 0, erster: null, fertig: false, weg: false, meldung: '', werte: {} };
+    // nachueben: Beim Ziffernschreiben darf nach zwei Fehlversuchen ohne Wertung weitergeübt werden.
+    r.c = { a, versuche: 0, erster: null, fertig: false, nachueben: false, weg: false, meldung: '', werte: {} };
   }
 
   function fortschrittsLeiste() {
@@ -53,6 +54,9 @@ export function zeigeRunde(app, fokus) {
     const c = r.c;
     const a = c.a;
     const info = skillInfo(a.skill);
+    const spur = a.eingabe.art === 'spur';
+    const gesperrt = c.fertig && !c.nachueben;
+    const weiterKnopf = '<button type="button" class="knopf primaer gross" data-action="weiter" id="weiter">Weiter →</button>';
     app.setze(
       `<div class="runde-kopf">
         ${fortschrittsLeiste()}
@@ -61,10 +65,12 @@ export function zeigeRunde(app, fokus) {
       <article class="karte aufgabe-karte" id="aufgabe">
         <div class="karte-kopf"><span class="tag">${esc(info.thema.titel)} · ${esc(info.stufe.titel)}</span><span class="nr">${r.i + 1} / ${r.plan.length}</span></div>
         ${aufgabeHTML(a, { vorlesen: true })}
-        ${eingabeHTML(a, { klein: app.klein(), gesperrt: c.fertig, werte: c.werte })}
-        <div class="rueckmeldung" role="status" aria-live="polite">${c.meldung}</div>
+        ${spur ? `<div class="rueckmeldung" role="status" aria-live="polite">${c.meldung}</div>` : ''}
+        ${spur && c.fertig ? `<div class="knopfreihe mitte">${weiterKnopf}</div>` : ''}
+        ${eingabeHTML(a, { klein: app.klein(), gesperrt, werte: c.werte })}
+        ${spur ? '' : `<div class="rueckmeldung" role="status" aria-live="polite">${c.meldung}</div>`}
         <div class="knopfreihe">
-          ${c.fertig ? '<button type="button" class="knopf primaer gross" data-action="weiter" id="weiter">Weiter →</button>' : ''}
+          ${c.fertig && !spur ? weiterKnopf : ''}
           ${c.weg ? '' : '<button type="button" class="knopf leise" data-action="weg">Lösungsweg zeigen</button>'}
         </div>
         ${c.weg ? `<div class="loesungsweg"><h2>So geht’s</h2>${schritteHTML(a.weg)}${ergebnisBox(a)}</div>` : ''}
@@ -77,6 +83,11 @@ export function zeigeRunde(app, fokus) {
       }
     );
     const karte = document.getElementById('aufgabe');
+    const loesen = [];
+    if (!gesperrt) {
+      loesen.push(eingabeBinden(karte, a, pruefen));
+      if (!c.fertig) eingabeFokus(karte);
+    }
     if (c.fertig) {
       const enter = (ev) => {
         if (ev.key === 'Enter' && !ev.repeat) {
@@ -85,13 +96,17 @@ export function zeigeRunde(app, fokus) {
         }
       };
       document.addEventListener('keydown', enter);
-      app.aufraeumen = () => document.removeEventListener('keydown', enter);
+      loesen.push(() => document.removeEventListener('keydown', enter));
       const w = document.getElementById('weiter');
-      if (w && window.matchMedia && window.matchMedia('(pointer: fine)').matches) w.focus();
-    } else {
-      app.aufraeumen = eingabeBinden(karte, a, pruefen);
-      eingabeFokus(karte);
+      if (w && !c.nachueben && window.matchMedia && window.matchMedia('(pointer: fine)').matches) w.focus();
     }
+    app.aufraeumen = () => loesen.forEach((f) => f());
+  }
+
+  /** Spielt beim Ziffernschreiben den Schreibweg (erneut) vor. */
+  function nochmalVorfuehren() {
+    const svg = document.querySelector('#aufgabe .spur-svg');
+    if (svg) setTimeout(() => vorfuehren(svg), 300);
   }
 
   function erstenVersuchWerten(richtig, fehler) {
@@ -109,7 +124,7 @@ export function zeigeRunde(app, fokus) {
 
   function pruefen(antwort) {
     const c = r.c;
-    if (c.fertig) return;
+    if (c.fertig && !c.nachueben) return;
     const karte = document.getElementById('aufgabe');
     const erg = c.a.pruefe(antwort);
     c.werte = eingabeWerte(karte, c.a);
@@ -121,12 +136,34 @@ export function zeigeRunde(app, fokus) {
     }
     c.versuche++;
     erstenVersuchWerten(erg.status === 'richtig', erg.fehler);
+    if (c.nachueben) {
+      // Weiterüben ohne Wertung (nur beim Ziffernschreiben)
+      if (erg.status === 'richtig') {
+        c.nachueben = false;
+        c.meldung = `<div class="meldung ok"><span class="meldung-titel">Jetzt klappt’s!</span>${c.a.nachRichtig ? `<p><b>${c.a.nachRichtig}</b></p>` : ''}</div>`;
+        app.sprich(c.a.nachRichtig ? `Jetzt klappt es! ${c.a.nachRichtig}` : 'Jetzt klappt es!');
+      } else {
+        c.meldung = `<div class="meldung falsch"><span class="meldung-titel">Noch nicht.</span><p>${erg.text || c.a.hinweis}</p><p class="leise">Schau zu und probier es noch einmal.</p></div>`;
+        app.sprich(erg.text || c.a.hinweis);
+      }
+      zeichnen();
+      if (c.nachueben) nochmalVorfuehren();
+      return;
+    }
     if (erg.status === 'richtig') {
       c.fertig = true;
       const lob = c.versuche === 1 ? wahl(LOB) : 'Jetzt stimmt’s!';
       const zusatz = (c.versuche === 1 ? '' : '<p>Gut, dass du drangeblieben bist.</p>') + (c.a.nachRichtig ? `<p><b>${c.a.nachRichtig}</b></p>` : '');
       c.meldung = `<div class="meldung ok"><span class="meldung-titel">${lob}</span>${zusatz}</div>`;
       app.sprich(c.a.nachRichtig ? `${lob} ${c.a.nachRichtig}` : lob);
+    } else if (c.versuche >= 2 && c.a.eingabe.art === 'spur') {
+      c.fertig = true;
+      c.nachueben = true;
+      c.meldung = `<div class="meldung falsch"><span class="meldung-titel">Schau mal, so geht’s.</span><p>${erg.text || ''}</p><p class="leise">Schau zu und probier es noch einmal.</p></div>`;
+      app.sprich(`Schau mal, so geht es. ${erg.text || ''}`);
+      zeichnen();
+      nochmalVorfuehren();
+      return;
     } else if (c.versuche >= 2) {
       c.fertig = true;
       c.weg = true;
@@ -146,6 +183,7 @@ export function zeigeRunde(app, fokus) {
     erstenVersuchWerten(false, null);
     c.weg = true;
     c.fertig = true;
+    if (c.a.eingabe.art === 'spur') c.nachueben = true;
     if (!c.meldung || c.versuche === 0) c.meldung = '';
     zeichnen();
     const weg = document.querySelector('.loesungsweg');

@@ -25,7 +25,7 @@ import { zeigeWerkstatt } from './ui/ansicht-werkstatt.js';
 const AKTIVES_PROFIL = 'mathewerkstatt:aktiv';
 
 /** Wird bei jeder Veröffentlichung hochgezählt und im Elternbereich angezeigt. */
-export const VERSION = '0.9 · 8.10.2026';
+export const VERSION = '0.10 · 8.10.2026';
 
 const app = {
   db: new Datenbank(new LokalesBackend()),
@@ -171,8 +171,20 @@ window.addEventListener('hashchange', route);
 
 // Offline-Nutzung, wenn die App über https ausgeliefert wird.
 try {
-  if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    // Übernimmt ein neuer Service Worker (neue App-Version), einmal neu laden,
+    // damit nur Dateien der neuen Version laufen.
+    const hatteSchonEinen = !!navigator.serviceWorker.controller;
+    let neuGeladen = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hatteSchonEinen || neuGeladen) return;
+      neuGeladen = true;
+      location.reload();
+    });
+    navigator.serviceWorker
+      .register('sw.js')
+      .then((reg) => reg.update())
+      .catch(() => {});
   }
 } catch (e) {
   /* nicht unterstützt */

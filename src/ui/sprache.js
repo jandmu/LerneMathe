@@ -6,6 +6,8 @@
  * Im Elternbereich lässt sich die Stimme pro Gerät fest auswählen.
  */
 
+import { zahlwort } from '../core/ziffern.js';
+
 let alleStimmen = [];
 let anzahlGesamt = 0;
 let gewuenscht = null; // voiceURI aus den Geräte-Einstellungen
@@ -91,12 +93,49 @@ export function aktuelleStimme() {
   return liste.find((v) => v.voiceURI === gewuenscht) || liste[0] || null;
 }
 
+const NENNER_WORT = { 2: 'Halbe', 3: 'Drittel', 7: 'Siebtel', 8: 'Achtel' };
+
+/** Bruch als Wort: bruchwort(3, 4) → „drei Viertel“, bruchwort(1, 2) → „ein Halb“. */
+export function bruchwort(z, n) {
+  const zz = Number(z);
+  const nn = Number(n);
+  if (!/^\d+$/.test(String(n).trim()) || nn < 2 || nn > 1000) return `${z} durch ${n}`;
+  let nenner = NENNER_WORT[nn] || (nn < 20 ? zahlwort(nn) + 'tel' : nn === 1000 ? 'Tausendstel' : zahlwort(nn) + 'stel');
+  nenner = nenner.charAt(0).toUpperCase() + nenner.slice(1);
+  if (String(z).trim() === '?') return `wie viele ${nenner}`;
+  if (!/^\d+$/.test(String(z).trim())) return `${z} durch ${n}`;
+  if (zz === 1) return nn === 2 ? 'ein Halb' : `ein ${nenner}`;
+  return `${zz <= 100 ? zahlwort(zz) : zz} ${nenner}`;
+}
+
+const ZEICHEN_WORT = { '+': 'plus', '−': 'minus', '·': 'mal', ':': 'geteilt durch', '=': 'gleich', '&lt;': 'kleiner als', '&gt;': 'größer als', '<': 'kleiner als', '>': 'größer als' };
+
+/** Macht dargestellte Mathematik (Brüche, gemischte Zahlen, Rechenzeichen, Lücken) vorlesbar. */
+export function htmlZuSprache(html) {
+  const F = '<span class="fr"><span class="fr-z">([^<]*)</span><span class="fr-n">([^<]*)</span></span>';
+  return String(html)
+    .replace(/<span class="luecke"[^>]*>[^<]*<\/span>/g, ' Lücke ')
+    .replace(new RegExp(`<span class="gz">(\\d+)${F}</span>`, 'g'), (_, g, z, n) => ` ${g} und ${bruchwort(z, n)} `)
+    .replace(new RegExp(F, 'g'), (_, z, n) => ` ${bruchwort(z, n)} `)
+    .replace(/<span class="op">([^<]*)<\/span>/g, (_, z) => ` ${ZEICHEN_WORT[z] || z} `)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Ziffern nach dem Komma einzeln sprechen, wie in der Schule: 0,45 → „0 Komma 4 5“. */
+function kommaZiffern(_, ganz, nach) {
+  return `${ganz} Komma ${nach.split('').join(' ')}`;
+}
+
 /** Macht Rechenzeichen vorlesbar. */
 export function sprechbar(text) {
   return String(text)
     .trim()
     .replace(/^([\d\s+−·:,]+?)\s*=\s*\?$/, 'Wie viel ist $1?')
-    .replace(/(\d),(\d)/g, '$1 Komma $2')
+    .replace(/(\d+),(\d+)/g, kommaZiffern)
     .replace(/\s*−\s*/g, ' minus ')
     .replace(/\s*\+\s*/g, ' plus ')
     .replace(/\s*·\s*/g, ' mal ')

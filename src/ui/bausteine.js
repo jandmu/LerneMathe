@@ -1,6 +1,7 @@
 /** Wiederverwendbare Bausteine der Oberfläche (reine HTML-Erzeugung). */
 import { esc } from '../core/util.js';
 import { STATUS_TEXT, SITZT_AB } from '../core/lernplan.js';
+import { htmlZuSprache } from './sprache.js';
 
 export const FARBEN = ['tomate', 'ozean', 'wiese', 'sonne', 'flieder', 'lagune'];
 
@@ -67,9 +68,8 @@ export function vorleseText(a) {
   if (a.sprich) return a.sprich;
   const tmp = String(a.text).replace(/<[^>]*>/g, ' ');
   const rechnung = a.rechnung
-    ? String(a.rechnung)
-        .replace(/<[^>]*>/g, ' ')
-        .replace(/\s*=\s*\?\s*$/, '')
+    ? htmlZuSprache(a.rechnung)
+        .replace(/\s*(=|gleich)\s*\?\s*$/, '')
         .replace(/\?/g, '')
     : '';
   return `${tmp} ${rechnung}`.replace(/\s+/g, ' ').trim();

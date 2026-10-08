@@ -2,6 +2,21 @@
 import { esc } from '../core/util.js';
 import { avatar } from './bausteine.js';
 import { profilFormular, profilLesen, profilFormularBinden } from './profilformular.js';
+import { istInstalliert, istMobil, installAnleitung } from './geraet.js';
+
+const HINWEIS_PAUSE = 14 * 24 * 60 * 60 * 1000;
+
+/** Tipp für Eltern: App installieren, damit Safari den Lernstand nicht löscht. */
+function installHinweis(app) {
+  const weg = app.geraet && app.geraet.installHinweisWeg;
+  if (!istMobil() || istInstalliert() || (weg && Date.now() - weg < HINWEIS_PAUSE)) return '';
+  return `<div class="install-hinweis" id="install-hinweis">
+    <p><b>Tipp für Eltern:</b> Legt die Mathewerkstatt auf den Home-Bildschirm. Dann bleibt der Lernstand sicher gespeichert,
+    auch wenn ihr mal eine Woche nicht übt.</p>
+    <details><summary>So geht’s</summary><p>${installAnleitung()}</p></details>
+    <button type="button" class="knopf klein leise" data-action="hinweis-weg">Später</button>
+  </div>`;
+}
 
 export async function zeigeStart(app) {
   const profile = await app.profileLaden();
@@ -9,6 +24,7 @@ export async function zeigeStart(app) {
 
   app.setze(
     `<section class="start">
+      ${installHinweis(app)}
       <h1>Wer rechnet heute?</h1>
       <ul class="profil-liste">
         ${profile
@@ -24,6 +40,14 @@ export async function zeigeStart(app) {
       <p class="leise-zeile">Ein weiteres Kind anlegen oder den Lernstand ansehen: <a href="#/eltern">Elternbereich</a></p>
     </section>`,
     {
+      async 'hinweis-weg'() {
+        const g = await app.db.geraet();
+        g.installHinweisWeg = Date.now();
+        await app.db.geraetSpeichern(g);
+        app.geraet = g;
+        const el = document.getElementById('install-hinweis');
+        if (el) el.remove();
+      },
       async waehlen(el) {
         if (await app.profilAktivieren(el.dataset.id)) app.geheZu('kind');
       },

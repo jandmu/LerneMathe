@@ -2529,3 +2529,52 @@ html.klein .rechnung {
   margin: 0;
   padding-left: 1.2em;
 }
+
+/* ---------- Datensicherheit ---------- */
+
+.install-hinweis {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px 16px;
+  text-align: left;
+  border: 2px solid var(--stern);
+  border-radius: var(--radius);
+  background: var(--fast-zart);
+  font-size: 0.95rem;
+}
+
+.install-hinweis summary,
+.daten-status summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--akzent);
+}
+
+.daten-status {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.daten-status li {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--blatt);
+  border-left: 4px solid var(--linie);
+}
+
+.daten-status li.ok {
+  border-left-color: var(--gut);
+}
+
+.daten-status li.warnung {
+  border-left-color: var(--stern);
+  background: var(--fast-zart);
+}

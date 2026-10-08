@@ -9,6 +9,7 @@ import { THEMEN, skillId, skillsFuerKlasse } from '../inhalte/index.js';
 import { avatar, sterne, statusPille } from './bausteine.js';
 import { profilFormular, profilLesen, profilFormularBinden } from './profilformular.js';
 import { zeigeWerkstattVorschau } from './ansicht-werkstatt.js';
+import { istInstalliert, installAnleitung, speicherDauerhaft } from './geraet.js';
 import { deutscheStimmen, beiStimmenGeladen, einstellen, sprich, kannSprechen, aktuelleStimme, stimmenGesamt, neuLaden } from './sprache.js';
 
 const TEMPI = [
@@ -27,6 +28,7 @@ export async function zeigeEltern(app, unterseite) {
   const geraet = await app.db.geraet();
   const geraetSichern = async () => {
     await app.db.geraetSpeichern(geraet);
+    app.geraet = geraet;
     einstellen(geraet);
   };
   const gewaehlt = profile.find((p) => p.id === ansicht.auswahl);
@@ -81,6 +83,7 @@ export async function zeigeEltern(app, unterseite) {
     <section class="eltern-abschnitt">
       <h2>Daten</h2>
       <p class="leise">Alle Daten liegen nur in diesem Browser. Mit einer Sicherung kannst du sie auf ein anderes Gerät mitnehmen.</p>
+      ${datenStatus(geraet, profile.length > 0)}
       <div class="knopfreihe">
         <button type="button" class="knopf" data-action="export">Sicherung herunterladen</button>
         <label class="knopf datei-knopf">Sicherung einspielen<input type="file" id="import-datei" accept="application/json,.json" class="sr-only"></label>
@@ -167,6 +170,10 @@ export async function zeigeEltern(app, unterseite) {
         a.click();
         a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
+        geraet.letzteSicherung = Date.now();
+        await app.db.geraetSpeichern(geraet);
+        app.geraet = geraet;
+        zeigeEltern(app);
       },
       'alles-frage'() {
         ansicht.allesLoeschen = true;
@@ -256,6 +263,28 @@ export async function zeigeEltern(app, unterseite) {
       meldung.hidden = false;
     }
   });
+}
+
+const TAG = 24 * 60 * 60 * 1000;
+
+/** Zeigt, wie sicher die Daten auf diesem Gerät sind, und erinnert an Sicherungen. */
+function datenStatus(geraet, hatProfile) {
+  const installiert = istInstalliert();
+  const letzte = geraet.letzteSicherung;
+  const tage = letzte ? Math.floor((Date.now() - letzte) / TAG) : null;
+  const sicherungText = !letzte ? 'noch nie' : tage === 0 ? 'heute' : tage === 1 ? 'gestern' : `vor ${tage} Tagen`;
+  const sicherungAlt = hatProfile && (!letzte || tage > 14);
+  // Ob der Speicher dauerhaft ist, meldet der Browser erst asynchron.
+  speicherDauerhaft().then((ja) => {
+    const el = document.getElementById('speicher-status');
+    if (el) el.textContent = ja === true ? 'dauerhaft gesichert' : ja === false ? 'kann vom Browser gelöscht werden' : 'unbekannt';
+  });
+  return `<ul class="daten-status">
+    <li class="${installiert ? 'ok' : 'warnung'}"><b>Als App installiert:</b> ${installiert ? 'ja' : 'nein'}
+      ${installiert ? '' : `<details><summary>Warum und wie?</summary><p>Safari löscht Daten von Webseiten, die etwa eine Woche nicht geöffnet wurden. Installierte Apps sind davon ausgenommen. ${installAnleitung()}</p></details>`}</li>
+    <li><b>Speicher:</b> <span id="speicher-status">wird geprüft …</span></li>
+    <li class="${sicherungAlt ? 'warnung' : 'ok'}"><b>Letzte Sicherung:</b> ${sicherungText}${sicherungAlt ? ' – eine Sicherung wird empfohlen.' : ''}</li>
+  </ul>`;
 }
 
 function profilZeile(p, ansicht) {

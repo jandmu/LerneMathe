@@ -42,8 +42,11 @@ export async function browserStarten() {
 }
 
 /** Neue Seite in Handy-Größe. Sammelt JavaScript-Fehler in seite.fehler. */
-export async function neueSeite(browser) {
-  const kontext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: false });
+export const IPHONE_UA =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
+
+export async function neueSeite(browser, { userAgent } = {}) {
+  const kontext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: false, acceptDownloads: true, ...(userAgent ? { userAgent } : {}) });
   await kontext.addInitScript(() => {
     window.__TEST__ = true;
   });

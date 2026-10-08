@@ -15,6 +15,7 @@ import {
   aufgabeLoesen,
   keineUeberbreite,
   warte,
+  IPHONE_UA,
 } from './hilfen.js';
 
 let server;
@@ -175,5 +176,24 @@ test('Elternbereich: Lernstand, Vorlesestimme, Werkstatt-Vorschau ohne Änderung
   await seite.click('[data-teil=giraffe]');
   const nachher = await seite.evaluate(() => JSON.stringify(Object.entries(localStorage).filter(([k]) => k.includes('fortschritt'))));
   assert.equal(nachher, vorher);
+  await fertig(seite);
+});
+
+test('Datensicherheit: Install-Tipp auf dem iPhone, Sicherungs-Erinnerung im Elternbereich', async () => {
+  const seite = await neueSeite(browser, { userAgent: IPHONE_UA });
+  await profileAnlegen(seite, url, [{ name: 'Mia', klasse: 1 }]);
+  assert.equal(await seite.locator('#install-hinweis').count(), 1, 'Install-Tipp fehlt');
+  await seite.click('[data-action="hinweis-weg"]');
+  await warte(seite);
+  await seite.reload();
+  await seite.waitForSelector('.profil-kachel');
+  assert.equal(await seite.locator('#install-hinweis').count(), 0, 'Tipp kommt nach „Später“ sofort wieder');
+
+  await elternOeffnen(seite, url);
+  assert.match(await seite.textContent('.daten-status'), /Letzte Sicherung:\s*noch nie – eine Sicherung wird empfohlen/);
+  const [download] = await Promise.all([seite.waitForEvent('download'), seite.click('[data-action=export]')]);
+  assert.match(download.suggestedFilename(), /^mathewerkstatt-sicherung-\d{4}-\d{2}-\d{2}\.json$/);
+  await warte(seite, 300);
+  assert.match(await seite.textContent('.daten-status'), /Letzte Sicherung:\s*heute/);
   await fertig(seite);
 });

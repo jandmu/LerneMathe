@@ -13,6 +13,7 @@
  */
 import { Datenbank, LokalesBackend } from './core/speicher.js';
 import { sprich, stopp, einstellen } from './ui/sprache.js';
+import { speicherSichern } from './ui/geraet.js';
 import { avatar } from './ui/bausteine.js';
 import { esc } from './core/util.js';
 import { zeigeStart } from './ui/ansicht-start.js';
@@ -164,7 +165,9 @@ async function route() {
 window.addEventListener('hashchange', route);
 
 (async () => {
-  einstellen(await app.db.geraet());
+  app.geraet = await app.db.geraet();
+  einstellen(app.geraet);
+  speicherSichern();
   await app.profileLaden();
   await route();
 })();

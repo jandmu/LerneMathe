@@ -107,7 +107,29 @@ function naechster(p, liste) {
   return { d: best, index };
 }
 
-export const TOLERANZ = { start: 24, ende: 18, nah: 17, weit: 18, ausreisser: 0.08, mittel: 13, abdeckung: 0.75, richtung: 0.7 };
+/**
+ * Toleranzen in Feldeinheiten (das Feld ist 100 breit; die graue Spur ist 13 breit, also ±6,5 um die Mitte).
+ *   start/ende: Abstand des ersten/letzten Punkts zum Anfang/Ende der Spur
+ *   nah:        ab diesem Abstand gilt ein Punkt der Spur als „überfahren“ (für die Abdeckung)
+ *   weit:       Punkte weiter weg zählen als Ausreißer, höchstens Anteil `ausreisser` davon
+ *   mittel:     höchster mittlerer Abstand zur Spur
+ *   laenge:     gefahrener Weg höchstens so viel länger als die Spur (Zickzack fällt auf)
+ */
+export const TOLERANZ = { start: 22, ende: 16, nah: 12, weit: 12, ausreisser: 0.1, mittel: 7, laenge: 1.5, abdeckung: 0.8, richtung: 0.7 };
+
+function laenge(punkte) {
+  let l = 0;
+  for (let i = 1; i < punkte.length; i++) l += abstand(punkte[i - 1], punkte[i]);
+  return l;
+}
+
+/** Entfernt Punkte, die näher als `min` am vorigen liegen (Fingerzittern im Stillstand). */
+function ausduennen(punkte, min = 1.5) {
+  const aus = [punkte[0]];
+  for (const p of punkte.slice(1)) if (abstand(p, aus[aus.length - 1]) >= min) aus.push(p);
+  if (aus.length === 1 && punkte.length > 1) aus.push(punkte[punkte.length - 1]);
+  return aus;
+}
 
 /**
  * Prüft nachgespurte Striche gegen den Schreibweg einer Ziffer.
@@ -121,8 +143,13 @@ export function pruefeSpur(ziffer, striche) {
     return { status: 'ungueltig', text: soll.length > 1 ? `Die ${ziffer} hat ${soll.length} Striche. Es fehlt noch einer.` : 'Fahre die Spur mit dem Finger nach.' };
   }
   for (let i = 0; i < soll.length; i++) {
-    const S = abtasten(soll[i]);
-    const U = gleichmaessig(gueltig[i], 40);
+    const S0 = abtasten(soll[i]);
+    const lS = laenge(S0);
+    // Dicht abgetastet (etwa alle 1 Einheit), damit auch kleine Abweichungen messbar sind.
+    const S = gleichmaessig(S0, Math.max(40, Math.round(lS)));
+    const roh = ausduennen(gueltig[i]);
+    const lU = laenge(roh);
+    const U = gleichmaessig(roh, Math.max(40, Math.round(lU / 1.5)));
     const geschlossen = abstand(S[0], S[S.length - 1]) < 5;
     const nr = soll.length > 1 ? (i === 0 ? 'Beim ersten Strich: ' : 'Beim zweiten Strich: ') : '';
 
@@ -157,6 +184,10 @@ export function pruefeSpur(ziffer, striche) {
     // Der Strich muss am Ende der Spur aufhören (nicht darüber hinaus weiterschreiben).
     if (abstand(U[U.length - 1], S[S.length - 1]) > TOLERANZ.ende) {
       return { status: 'falsch', text: `${nr}Hör am Ende der Spur auf. Du hast darüber hinaus weitergeschrieben.`, fehler: 'ziffer-ueber' };
+    }
+    // Zickzack: Der gefahrene Weg ist deutlich länger als die Spur.
+    if (lU > lS * TOLERANZ.laenge) {
+      return { status: 'falsch', text: `${nr}Fahr ruhig an der Spur entlang, nicht im Zickzack.`, fehler: 'ziffer-ungenau' };
     }
     // Ausreißer: Teile des Strichs, die deutlich neben der Spur liegen.
     const weit = U.filter((p) => naechster(p, S).d > TOLERANZ.weit).length / U.length;

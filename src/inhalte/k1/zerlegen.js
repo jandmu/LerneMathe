@@ -37,6 +37,7 @@ export default {
   bereich: 'Zahlen',
   titel: 'Zahlen zerlegen',
   kurz: 'Das Zahlenhaus und die Zehnerfreunde',
+  symbol: () => zahlenhaus(7, 4, 3),
   voraussetzungen: ['k1-mengen'],
   erklaerung: [
     { text: 'Das ist ein Zahlenhaus. Im Dach steht 7. In den Zimmern wohnen 4 und 3. Denn 4 und 3 sind zusammen 7.', bild: `<div class="bild-reihe">${zahlenhaus(7, 4, 3)}${zehnerfeld(zellen(10, ['rot', 4], ['blau', 3]))}</div>` },

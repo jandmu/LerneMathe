@@ -2,7 +2,7 @@
 import { esc } from '../core/util.js';
 import { zustand, status, empfehlung, faellige, SITZT_AB } from '../core/lernplan.js';
 import { themenFuerKlasse, skillsFuerKlasse, skillInfo, skillId, thema as themaNach, klassenMitInhalt } from '../inhalte/index.js';
-import { sterne, statusPille } from './bausteine.js';
+import { sterne, statusPille, LAUTSPRECHER } from './bausteine.js';
 import { werkstatt } from '../core/belohnung.js';
 import { projektBild } from './werkstatt-grafik.js';
 
@@ -12,16 +12,28 @@ function stufenPunkte(app, t) {
     .join('')}</span>`;
 }
 
+/** Lautsprecher-Knopf, der einen Text vorliest (nur wenn das Profil Vorlesen eingeschaltet hat). */
+function vorleseKnopf(app, text, klasse = '') {
+  if (!app.profil.vorlesen) return '';
+  return `<button type="button" class="vorlese-knopf ${klasse}" data-action="vorlesen" data-text="${esc(text)}" aria-label="Vorlesen">${LAUTSPRECHER}</button>`;
+}
+
 function themaKarte(app, t) {
   const sitzen = t.stufen.filter((s) => zustand(app.fortschritt, skillId(t, s)).fach >= SITZT_AB).length;
-  return `<li><a class="thema-karte" href="#/thema/${t.id}">
+  return `<li class="thema-eintrag"><a class="thema-karte${t.symbol ? ' mit-symbol' : ''}" href="#/thema/${t.id}">
+    ${t.symbol ? `<span class="thema-symbol" aria-hidden="true">${t.symbol()}</span>` : ''}
     <span class="thema-text">
       <span class="thema-bereich">${esc(t.bereich)}</span>
       <span class="thema-titel">${esc(t.titel)}</span>
       <span class="thema-kurz">${esc(t.kurz)}</span>
     </span>
     <span class="thema-stand">${stufenPunkte(app, t)}<span class="thema-zahl">${sitzen}/${t.stufen.length}</span></span>
-  </a></li>`;
+  </a>${vorleseKnopf(app, `${t.titel}. ${t.kurz}`, 'thema-vorlesen')}</li>`;
+}
+
+/** Aktionen, die auf allen Kinderseiten gleich sind. */
+function kinderAktionen(app) {
+  return { vorlesen: (el) => app.sprich(el.dataset.text, true) };
 }
 
 export function zeigeKind(app) {
@@ -45,13 +57,16 @@ export function zeigeKind(app) {
   const geuebt = skills.some((id) => zustand(f, id).versuche > 0);
 
   let weiter;
+  let ansage = 'Alles sitzt gerade. Super! Du kannst gemischt üben.';
   if (emp) {
     const { thema: t, stufe: s } = skillInfo(emp);
     const themaNeu = t.stufen.every((x) => zustand(f, skillId(t, x)).versuche === 0);
     const stufeNeu = zustand(f, emp).versuche === 0;
     const ziel = themaNeu ? `#/lernen/${t.id}` : stufeNeu ? `#/lernen/${t.id}/${s.id}` : `#/ueben/${t.id}/${s.id}`;
     const knopf = themaNeu ? 'Neues Thema entdecken' : stufeNeu ? 'Zeig mir, wie es geht' : 'Weiter üben';
-    weiter = `<a class="weiter-karte" href="${ziel}">
+    ansage = `${themaNeu ? 'Neu für dich' : 'Als Nächstes'}: ${t.titel}. Tippe auf den blauen Knopf.`;
+    weiter = `<a class="weiter-karte${t.symbol ? ' mit-symbol' : ''}" href="${ziel}">
+      ${t.symbol ? `<span class="weiter-symbol" aria-hidden="true">${t.symbol()}</span>` : ''}
       <span class="etikett">${themaNeu ? 'Neu für dich' : 'Als Nächstes'}</span>
       <span class="weiter-titel">${esc(t.titel)}</span>
       <span class="weiter-stufe">${esc(s.titel)}</span>
@@ -73,15 +88,23 @@ export function zeigeKind(app) {
       ? `<a class="wdh-karte leise" href="#/ueben"><span class="wdh-zahl">✓</span><span><b>Gemischt üben</b><br>Heute ist nichts fällig.</span></a>`
       : '';
 
+  const begruessung = `Hallo ${p.name}! ${ansage}${faellig.length ? ' Und heute gibt es etwas zu wiederholen.' : ''}`;
   app.setze(
     `<section class="kind-start">
-      <h1>Hallo, ${esc(p.name)}!</h1>
+      <div class="kopf-mit-ton"><h1>Hallo, ${esc(p.name)}!</h1>${vorleseKnopf(app, begruessung)}</div>
       <div class="start-karten">${weiter}<div class="start-seite">${wiederholen}${werkstattKarte(app)}</div></div>
       <h2 class="abschnitt">Deine Themen · Klasse ${p.klasse}</h2>
       <ol class="themen">${themen.map((t) => themaKarte(app, t)).join('')}</ol>
       <p class="leise-zeile"><a href="#/klassen">Themen anderer Klassen ansehen</a></p>
-    </section>`
+    </section>`,
+    kinderAktionen(app)
   );
+  // Einmal pro Sitzung begrüßen (nur mit eingeschaltetem Vorlesen).
+  app.begruesst = app.begruesst || {};
+  if (p.vorlesen && !app.begruesst[p.id]) {
+    app.begruesst[p.id] = true;
+    app.sprich(begruessung);
+  }
 }
 
 function werkstattKarte(app) {
@@ -107,8 +130,12 @@ export function zeigeThema(app, id) {
     `<a class="zurueck" href="#/kind">← Zurück</a>
     <header class="thema-kopf">
       <span class="thema-bereich">${esc(t.bereich)} · Klasse ${t.klasse}</span>
-      <h1>${esc(t.titel)}</h1>
+      <div class="kopf-mit-ton"><h1>${esc(t.titel)}</h1>${vorleseKnopf(
+        app,
+        `${t.titel}. ${t.kurz}. Tippe auf Üben, um loszulegen. Oder auf Beispiel, dann zeige ich dir, wie es geht.`
+      )}</div>
       <p class="lead">${esc(t.kurz)}</p>
+      ${t.symbol ? `<div class="thema-kopf-symbol" aria-hidden="true">${t.symbol()}</div>` : ''}
       <div class="knopfreihe"><a class="knopf" href="#/lernen/${t.id}">Erklärung ansehen</a></div>
     </header>
     <ol class="stufen-liste">
@@ -130,7 +157,8 @@ export function zeigeThema(app, id) {
           </li>`;
         })
         .join('')}
-    </ol>`
+    </ol>`,
+    kinderAktionen(app)
   );
 }
 

@@ -1,6 +1,6 @@
 /** Klasse 1: Ziffern schreiben (nachspuren) und Zahlen hören und schreiben (Zahlendiktat). */
 import { zahlAufgabe, S } from '../../core/aufgabe.js';
-import { zehnerfeld, zwanzigerfeld, zellen, spurBild } from '../../core/bilder.js';
+import { zehnerfeld, zwanzigerfeld, zellen, spurBild, hoerSymbol } from '../../core/bilder.js';
 import { pruefeSpur, SCHREIBWEG, zahlwort } from '../../core/ziffern.js';
 import { zufall, wahl } from '../../core/util.js';
 
@@ -30,6 +30,7 @@ export const ziffern = {
   bereich: 'Zahlen',
   titel: 'Ziffern schreiben',
   kurz: 'Mit dem Finger nachspuren, dann ins Heft',
+  symbol: () => spurBild(7, 'voll'),
   erklaerung: [
     { text: 'Jede Ziffer hat einen Anfang. Der grüne Punkt zeigt dir, wo du mit dem Finger anfängst.', bild: `<div class="spur-klein">${spurBild(1, 'voll')}</div>` },
     { text: 'Die Pfeile zeigen dir, in welche Richtung du schreibst. Manche Ziffern haben zwei Striche. Dann steht 1 und 2 an den Punkten.', bild: `<div class="spur-klein">${spurBild(7, 'voll')}</div>` },
@@ -87,6 +88,7 @@ export const diktat = {
   bereich: 'Zahlen',
   titel: 'Zahlen hören und schreiben',
   kurz: 'Zahlendiktat: Erst die Zehner, dann die Einer',
+  symbol: () => hoerSymbol(13),
   voraussetzungen: ['k1-mengen'],
   erklaerung: [
     { text: 'Ich sage dir eine Zahl. Du tippst sie ein. Mit dem Lautsprecher kannst du sie noch einmal hören.' },

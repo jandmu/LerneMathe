@@ -6,6 +6,7 @@
  *
  * Thema = {
  *   id, klasse, bereich, titel, kurz, voraussetzungen: [themaId],
+ *   symbol?: () => svg                             // Bild zum Wiedererkennen ohne Lesen (Klasse 1–2)
  *   erklaerung?: [{ text, bild?, rechnung? }]     // Erklärkarten (für jüngere Kinder, werden vorgelesen)
  *   merke?, text?, fehler?: [html]                // Erklärseite (für ältere Kinder)
  *   stufen: [{ id, titel, aufgabe: () => Aufgabe }]

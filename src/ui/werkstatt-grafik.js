@@ -125,14 +125,15 @@ export const PROJEKT_GRAFIK = { auto: AUTO, rakete: RAKETE, baumhaus: BAUMHAUS, 
  * Zeichnet ein Projekt mit den eingebauten Teilen.
  * neu: ID eines gerade eingebauten Teils (wird hervorgehoben).
  */
-export function projektBild(projekt, { farbe = 0, teile = [], neu = null, klein = false } = {}) {
+export function projektBild(projekt, { farbe = 0, teile = [], neu = null, vorschau = null, klein = false } = {}) {
   const p = PROJEKT_GRAFIK[projekt];
   if (!p) return '';
   const c = p.farben[farbe] || p.farben[0];
+  const sichtbar = vorschau && !teile.includes(vorschau) ? teile.concat(vorschau) : teile;
   const ebene = (vorne) =>
     p.teile
-      .filter((t) => t.vorne === vorne && teile.includes(t.id))
-      .map((t) => g(t.svg(c), `teil${t.id === neu ? ' neu' : ''}`))
+      .filter((t) => t.vorne === vorne && sichtbar.includes(t.id))
+      .map((t) => g(t.svg(c), `teil${t.id === neu ? ' neu' : ''}${t.id === vorschau && !teile.includes(t.id) ? ' vorschau' : ''}`))
       .join('');
   const label = `${p.name} mit ${teile.length} von ${p.teile.length} Teilen`;
   return `<svg class="projekt-svg${klein ? ' klein' : ''}" viewBox="0 0 320 200" role="img" aria-label="${label}">

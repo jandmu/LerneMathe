@@ -159,6 +159,10 @@ test('Runde mit Belohnung, Projekt wählen, Teil einbauen', async () => {
   await warte(seite);
   await seite.click('.teil-knopf.bereit >> nth=0');
   await warte(seite, 300);
+  assert.equal(await seite.locator('.teil.vorschau').count(), 1, 'Erstes Tippen zeigt keine Vorschau');
+  assert.equal(await seite.locator('.teil-knopf.eingebaut').count(), 0, 'Erstes Tippen darf noch nicht einbauen');
+  await seite.click('.teil-knopf.gewaehlt');
+  await warte(seite, 300);
   assert.equal(await seite.locator('.teil-knopf.eingebaut').count(), 1);
   await fertig(seite);
 });
@@ -195,5 +199,18 @@ test('Datensicherheit: Install-Tipp auf dem iPhone, Sicherungs-Erinnerung im Elt
   assert.match(download.suggestedFilename(), /^mathewerkstatt-sicherung-\d{4}-\d{2}-\d{2}\.json$/);
   await warte(seite, 300);
   assert.match(await seite.textContent('.daten-status'), /Letzte Sicherung:\s*heute/);
+  await fertig(seite);
+});
+
+test('Klasse 1: Themen mit Bild, Vorlese-Knöpfe auf Start- und Themenseite', async () => {
+  const seite = await seiteMitProfilen();
+  await profilWaehlen(seite, url, 0);
+  const k1 = THEMEN.filter((t) => t.klasse === 1).length;
+  assert.equal(await seite.locator('.thema-symbol svg').count(), k1, 'Nicht jedes Thema hat ein Bild');
+  assert.equal(await seite.locator('.thema-vorlesen').count(), k1, 'Nicht jedes Thema hat einen Vorlese-Knopf');
+  assert.equal(await seite.locator('.kopf-mit-ton .vorlese-knopf').count(), 1, 'Begrüßung ohne Vorlese-Knopf');
+  await seite.click('.thema-karte >> nth=1');
+  await warte(seite);
+  assert.equal(await seite.locator('.kopf-mit-ton .vorlese-knopf').count(), 1, 'Themenseite ohne Vorlese-Knopf');
   await fertig(seite);
 });

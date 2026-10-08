@@ -31,6 +31,7 @@ export default {
   bereich: 'Zahlen',
   titel: 'Mengen sehen',
   kurz: 'Wie viele sind es? Ohne Zählen!',
+  symbol: () => zehnerfeld(zellen(10, ['rot', 8])),
   erklaerung: [
     { text: 'Hier sind 5 Plättchen. Das ist eine volle Reihe. Du musst nicht zählen, du siehst es sofort.', bild: zehnerfeld(zellen(10, ['rot', 5])) },
     { text: 'Eine volle Reihe sind 5. Unten kommen noch 3 dazu. 5 und 3 sind 8.', bild: zehnerfeld(zellen(10, ['rot', 8])) },

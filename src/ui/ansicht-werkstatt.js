@@ -8,7 +8,7 @@ const KISTE =
 
 const VORSCHAU = { auto: ['felgen', 'spoiler', 'streifen'], rakete: ['flammen', 'astronaut', 'mond'], baumhaus: ['dach', 'schaukel', 'sonne'], tierpark: ['giraffe', 'pinguin', 'teich'] };
 
-export function zeigeWerkstatt(app, { wahl = false, neu = null } = {}) {
+export function zeigeWerkstatt(app, { wahl = false, neu = null, vorschau = null } = {}) {
   if (app.profil.werkstatt === false) return app.geheZu('kind');
   const f = app.fortschritt;
   const w = werkstatt(f);
@@ -54,7 +54,7 @@ export function zeigeWerkstatt(app, { wahl = false, neu = null } = {}) {
   app.setze(
     `<a class="zurueck" href="#/kind">← Zurück</a>
     <h1>Dein ${esc(p.name)}</h1>
-    <div class="werkstatt-buehne">${projektBild(w.projekt, { farbe: w.farbe, teile: drin, neu })}</div>
+    <div class="werkstatt-buehne">${projektBild(w.projekt, { farbe: w.farbe, teile: drin, neu, vorschau })}</div>
     <div class="kisten-leiste${w.kisten ? ' voll' : ''}">
       ${KISTE}<span><b>${w.kisten} ${w.kisten === 1 ? 'Kiste' : 'Kisten'}</b><br><span class="leise">${hinweis}</span></span>
     </div>
@@ -64,9 +64,11 @@ export function zeigeWerkstatt(app, { wahl = false, neu = null } = {}) {
         .map((t) => {
           const ist = drin.includes(t.id);
           const geht = !ist && w.kisten > 0;
-          return `<li><button type="button" class="teil-knopf${ist ? ' eingebaut' : geht ? ' bereit' : ''}" data-action="einbauen" data-teil="${t.id}" ${ist || !geht ? 'disabled' : ''}>
+          const gewaehlt = vorschau === t.id && !ist;
+          const status = ist ? '✓ eingebaut' : gewaehlt ? (geht ? 'Nochmal tippen: einbauen' : 'Dafür brauchst du eine Kiste') : geht ? 'Ansehen' : 'Ansehen · Kiste nötig';
+          return `<li><button type="button" class="teil-knopf${ist ? ' eingebaut' : geht ? ' bereit' : ''}${gewaehlt ? ' gewaehlt' : ''}" data-action="teil" data-teil="${t.id}" ${ist ? 'disabled' : ''} aria-pressed="${gewaehlt}">
             <span class="teil-name">${esc(t.name)}</span>
-            <span class="teil-status">${ist ? '✓ eingebaut' : geht ? 'Einbauen' : 'Kiste nötig'}</span>
+            <span class="teil-status">${status}</span>
           </button></li>`;
         })
         .join('')}
@@ -82,12 +84,22 @@ export function zeigeWerkstatt(app, { wahl = false, neu = null } = {}) {
     </div>
     <div class="knopfreihe"><button type="button" class="knopf" data-action="wechseln">${fertig ? 'Neues Projekt anfangen' : 'Anderes Projekt wählen'}</button></div>`,
     {
-      async einbauen(el) {
+      async teil(el) {
         const t = p.teile.find((x) => x.id === el.dataset.teil);
-        if (t && teilEinbauen(f, t.id)) {
+        if (!t) return;
+        const name = t.name.replace(/\u00AD/g, '');
+        // Erstes Tippen: Vorschau im Bild und Name vorlesen. Zweites Tippen: einbauen (wenn eine Kiste da ist).
+        if (vorschau !== t.id || w.kisten < 1) {
+          zeigeWerkstatt(app, { vorschau: t.id });
+          app.sprich(w.kisten > 0 ? `${name}. Tippe nochmal, dann baue ich es ein.` : `${name}. Dafür brauchst du eine Kiste.`, true);
+          const buehne = document.querySelector('.werkstatt-buehne');
+          if (buehne) buehne.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+        if (teilEinbauen(f, t.id)) {
           await app.speichern();
           zeigeWerkstatt(app, { neu: t.id });
-          app.sprich(`Super! ${t.name.replace(/\u00AD/g, '')} ist eingebaut.`, true);
+          app.sprich(`Super! ${name} ist eingebaut.`, true);
           const buehne = document.querySelector('.werkstatt-buehne');
           if (buehne) buehne.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }

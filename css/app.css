@@ -1403,7 +1403,8 @@ html.klein .rechnung {
 }
 
 /* Plättchenfelder */
-.feld .feld-rahmen {
+.feld .feld-rahmen,
+.hoer-symbol .feld-rahmen {
   fill: var(--blatt);
   stroke: var(--tinte);
   stroke-width: 2;
@@ -2450,8 +2451,8 @@ html.klein .rechnung {
   background: var(--gut-zart);
 }
 
-.teil-knopf:not(.bereit):not(.eingebaut) {
-  opacity: 0.6;
+.teil-knopf:not(.bereit):not(.eingebaut):not(.gewaehlt) {
+  opacity: 0.75;
 }
 
 .teile-liste li {
@@ -2577,4 +2578,115 @@ html.klein .rechnung {
 .daten-status li.warnung {
   border-left-color: var(--stern);
   background: var(--fast-zart);
+}
+
+/* ---------- Ohne Lesen bedienbar (Klasse 1–2) ---------- */
+
+.kopf-mit-ton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thema-eintrag {
+  position: relative;
+}
+
+.thema-karte.mit-symbol {
+  align-items: center;
+}
+
+.thema-symbol {
+  flex: none;
+  width: 88px;
+  display: flex;
+  justify-content: center;
+}
+
+.thema-symbol .bild-svg,
+.weiter-symbol .bild-svg,
+.thema-kopf-symbol .bild-svg {
+  width: 100%;
+  height: auto;
+}
+
+.thema-symbol .spur-svg,
+.weiter-symbol .spur-svg {
+  width: 52px;
+  border: 0;
+  background: transparent;
+}
+
+.thema-symbol .haus,
+.weiter-symbol .haus {
+  width: 70px;
+}
+
+.thema-karte.mit-symbol .thema-stand {
+  margin-right: 40px;
+}
+
+.thema-vorlesen {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.thema-vorlesen svg {
+  width: 22px;
+  height: 22px;
+}
+
+.weiter-karte.mit-symbol {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  column-gap: 14px;
+}
+
+.weiter-karte.mit-symbol > :not(.weiter-symbol) {
+  grid-column: 1;
+}
+
+.weiter-symbol {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+}
+
+.thema-kopf-symbol {
+  width: 140px;
+}
+
+.thema-kopf-symbol .spur-svg {
+  width: 80px;
+}
+
+.hoer-symbol .hoer-lautsprecher {
+  fill: var(--akzent);
+  stroke: none;
+}
+
+.hoer-symbol .hoer-welle {
+  fill: none;
+  stroke: var(--akzent);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.teil.vorschau {
+  opacity: 0.55;
+  animation: vorschau-pulsieren 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes vorschau-pulsieren {
+  to {
+    opacity: 0.9;
+  }
+}
+
+.teil-knopf.gewaehlt {
+  border-color: var(--akzent);
+  box-shadow: 0 0 0 3px var(--akzent-zart);
 }

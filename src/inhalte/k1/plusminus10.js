@@ -49,6 +49,7 @@ export default {
   bereich: 'Rechnen',
   titel: 'Plus und Minus bis 10',
   kurz: 'Dazutun und Wegnehmen',
+  symbol: () => zehnerfeld(zellen(10, ['rot', 4], ['blau', 3])),
   voraussetzungen: ['k1-zerlegen'],
   erklaerung: [
     { text: 'Plus heißt: Es kommt etwas dazu. 4 rote Plättchen, 3 blaue kommen dazu. Zusammen sind es 7.', rechnung: '4 + 3 = 7', bild: zehnerfeld(zellen(10, ['rot', 4], ['blau', 3])) },

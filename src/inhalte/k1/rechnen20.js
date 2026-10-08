@@ -140,6 +140,7 @@ export const plus20 = {
   bereich: 'Rechnen',
   titel: 'Plus bis 20',
   kurz: 'Verdoppeln und über die 10 rechnen',
+  symbol: () => zwanzigerfeld(zellen(20, ['rot', 8], ['blau', 5])),
   voraussetzungen: ['k1-plusminus10'],
   erklaerung: [
     { text: '13 plus 4. Die 10 bleibt einfach stehen. Rechne nur 3 plus 4, das ist 7. Also 17.', rechnung: '13 + 4 = 17', bild: zwanzigerfeld(zellen(20, ['rot', 13], ['blau', 4])) },
@@ -160,6 +161,7 @@ export const minus20 = {
   bereich: 'Rechnen',
   titel: 'Minus bis 20',
   kurz: 'Zurück über die 10 rechnen',
+  symbol: () => zwanzigerfeld(zellen(20, ['rot', 8], ['weg', 5])),
   voraussetzungen: ['k1-plus20'],
   erklaerung: [
     { text: '17 minus 5. Die 10 bleibt stehen. Rechne nur 7 minus 5, das ist 2. Also 12.', rechnung: '17 − 5 = 12', bild: zwanzigerfeld(zellen(20, ['rot', 12], ['weg', 5])) },

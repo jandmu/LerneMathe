@@ -111,3 +111,13 @@ export function spurBild(ziffer, hilfe = 'voll', { id = '', interaktiv = false }
     ${fuehrung}<g class="spur-vorfuehrung"></g>${marken}<g class="spur-kind"></g>
   </svg>`;
 }
+
+/** Symbol für „Zahlen hören“: Lautsprecher mit Zahl. */
+export function hoerSymbol(zahl) {
+  return `<svg class="bild-svg hoer-symbol" viewBox="0 0 120 70" role="img" aria-label="Lautsprecher und Zahl ${zahl}">
+    <rect class="feld-rahmen" x="2" y="2" width="116" height="66" rx="10"/>
+    <path class="hoer-lautsprecher" d="M14 27h10l13-11v38L24 43H14z"/>
+    <path class="hoer-welle" d="M44 25a14 14 0 0 1 0 20M50 19a22 22 0 0 1 0 32"/>
+    <text class="haus-text" x="88" y="47">${zahl}</text>
+  </svg>`;
+}

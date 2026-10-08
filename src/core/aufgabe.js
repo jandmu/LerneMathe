@@ -12,6 +12,7 @@
  *   weg       – Lösungsweg als Liste von Schritten { text, mathe }
  *   ergebnis  – Ergebnis als HTML
  *   hinweis   – allgemeiner Tipp bei falscher Antwort
+ *   lob       – optional: eigene Lobsätze (sonst allgemeine, z. B. „Super gerechnet!“)
  *   schluessel – zum Erkennen von Wiederholungen innerhalb einer Runde
  */
 import { Bruch } from './bruch.js';
@@ -26,6 +27,7 @@ export const FEHLERBILDER = {
   'ziffer-richtung': 'Ziffer in falscher Richtung geschrieben',
   'ziffer-start': 'Ziffer am falschen Punkt begonnen',
   'ziffer-ungenau': 'Ziffer ungenau nachgespurt',
+  'ziffer-ueber': 'Über das Ende der Ziffer hinaus geschrieben',
   'plus-statt-minus': 'Plus statt Minus gerechnet',
   'minus-statt-plus': 'Minus statt Plus gerechnet',
   'zusammengezaehlt': 'Zerlegung: Zahlen zusammengezählt statt ergänzt',

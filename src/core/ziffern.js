@@ -107,7 +107,7 @@ function naechster(p, liste) {
   return { d: best, index };
 }
 
-export const TOLERANZ = { start: 24, nah: 17, mittel: 13, abdeckung: 0.75, richtung: 0.7 };
+export const TOLERANZ = { start: 24, ende: 18, nah: 17, weit: 18, ausreisser: 0.08, mittel: 13, abdeckung: 0.75, richtung: 0.7 };
 
 /**
  * Prüft nachgespurte Striche gegen den Schreibweg einer Ziffer.
@@ -153,6 +153,15 @@ export function pruefeSpur(ziffer, striche) {
     const mittel = U.reduce((s, p) => s + naechster(p, S).d, 0) / U.length;
     if (abdeckung < TOLERANZ.abdeckung) {
       return { status: 'falsch', text: `${nr}Fahre die ganze Spur nach, bis zum Ende.`, fehler: 'ziffer-ungenau' };
+    }
+    // Der Strich muss am Ende der Spur aufhören (nicht darüber hinaus weiterschreiben).
+    if (abstand(U[U.length - 1], S[S.length - 1]) > TOLERANZ.ende) {
+      return { status: 'falsch', text: `${nr}Hör am Ende der Spur auf. Du hast darüber hinaus weitergeschrieben.`, fehler: 'ziffer-ueber' };
+    }
+    // Ausreißer: Teile des Strichs, die deutlich neben der Spur liegen.
+    const weit = U.filter((p) => naechster(p, S).d > TOLERANZ.weit).length / U.length;
+    if (weit > TOLERANZ.ausreisser) {
+      return { status: 'falsch', text: `${nr}Bleib auf der Spur. Ein Stück ist danebengegangen.`, fehler: 'ziffer-ungenau' };
     }
     if (mittel > TOLERANZ.mittel) {
       return { status: 'falsch', text: `${nr}Bleib näher an der Spur.`, fehler: 'ziffer-ungenau' };

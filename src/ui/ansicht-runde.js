@@ -152,7 +152,7 @@ export function zeigeRunde(app, fokus) {
     }
     if (erg.status === 'richtig') {
       c.fertig = true;
-      const lob = c.versuche === 1 ? wahl(LOB) : 'Jetzt stimmt’s!';
+      const lob = c.versuche === 1 ? wahl(c.a.lob || LOB) : c.a.lob ? 'Jetzt klappt’s!' : 'Jetzt stimmt’s!';
       const zusatz = (c.versuche === 1 ? '' : '<p>Gut, dass du drangeblieben bist.</p>') + (c.a.nachRichtig ? `<p><b>${c.a.nachRichtig}</b></p>` : '');
       c.meldung = `<div class="meldung ok"><span class="meldung-titel">${lob}</span>${zusatz}</div>`;
       app.sprich(c.a.nachRichtig ? `${lob} ${c.a.nachRichtig}` : lob);

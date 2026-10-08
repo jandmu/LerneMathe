@@ -17,6 +17,7 @@ function zifferAufgabe(ziffern, hilfe) {
     pruefe: (striche) => pruefeSpur(d, striche),
     hinweis: SCHREIBWEG[d].join(' '),
     nachRichtig: `Schreib die ${d} jetzt noch dreimal in dein Heft.`,
+    lob: ['Schön geschrieben!', 'Genau so!', 'Toll nachgespurt!', 'Super geschrieben!', 'Prima!'],
     weg: SCHREIBWEG[d].map((t, i) => S(t, i === 0 ? `<div class="spur-klein">${spurBild(d, 'voll')}</div>` : '')),
     ergebnis: `<span class="ziffer-gross">${d}</span>`,
     schluessel: `ziffer-${d}-${hilfe}`,

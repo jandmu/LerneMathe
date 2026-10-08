@@ -151,7 +151,7 @@ export const plus20 = {
     { id: 'ohne', titel: 'Ohne Zehnerübergang', aufgabe: () => plusOhne(true) },
     { id: 'verdoppeln', titel: 'Verdoppeln', aufgabe: () => verdoppeln(true) },
     { id: 'uebergang', titel: 'Über die 10', aufgabe: () => plusUeber(true) },
-    { id: 'ohne-bild', titel: 'Alles ohne Bild', aufgabe: () => wahl([plusOhne, verdoppeln, plusUeber, plusUeber])(false) },
+    { id: 'ohne-bild', titel: 'Alles ohne Bild', aufgabe: () => wahl([plusOhne, verdoppeln, plusUeber, plusUeber])(false), mitHilfe: () => wahl([plusOhne, verdoppeln, plusUeber, plusUeber])(true) },
   ],
 };
 
@@ -170,6 +170,11 @@ export const minus20 = {
   stufen: [
     { id: 'ohne', titel: 'Ohne Zehnerübergang', aufgabe: () => minusOhne(true) },
     { id: 'uebergang', titel: 'Zurück über die 10', aufgabe: () => minusUeber(true) },
-    { id: 'gemischt', titel: 'Plus und Minus gemischt', aufgabe: () => wahl([plusOhne, plusUeber, verdoppeln, minusOhne, minusUeber, minusUeber])(false) },
+    {
+      id: 'gemischt',
+      titel: 'Plus und Minus gemischt',
+      aufgabe: () => wahl([plusOhne, plusUeber, verdoppeln, minusOhne, minusUeber, minusUeber])(false),
+      mitHilfe: () => wahl([plusOhne, plusUeber, verdoppeln, minusOhne, minusUeber, minusUeber])(true),
+    },
   ],
 };

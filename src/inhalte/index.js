@@ -55,12 +55,35 @@ export function skillInfo(id) {
 }
 
 /** Erzeugt eine neue Aufgabe zu einer Fertigkeit. */
-export function aufgabeFuer(id) {
+/**
+ * Erzeugt eine Aufgabe zur Fertigkeit.
+ * hilfe: Die Aufgabe bekommt eine Stütze (anpassende Hilfe nach Fehlern in der Runde).
+ * Stufen ohne Bild können mit `mitHilfe` eine Variante mit Bild anbieten; sonst wird der
+ * erste Schritt des Lösungswegs als Tipp gezeigt (siehe tippAusWeg).
+ */
+export function aufgabeFuer(id, { hilfe = false } = {}) {
   const info = skillInfo(id);
   if (!info) throw new Error('Unbekannte Fertigkeit: ' + id);
-  const a = info.stufe.aufgabe();
+  const mitBild = hilfe && info.stufe.mitHilfe;
+  const a = mitBild ? info.stufe.mitHilfe() : info.stufe.aufgabe();
   a.skill = id;
+  if (hilfe) {
+    a.hilfe = mitBild ? 'bild' : 'tipp';
+    if (!mitBild) a.tipp = tippAusWeg(a);
+  }
   return a;
+}
+
+/** Erster Schritt des Lösungswegs als Tipp, nur wenn er die Lösung noch nicht verrät. */
+export function tippAusWeg(a) {
+  if (!a.weg || a.weg.length < 2) return null;
+  return a.weg[0];
+}
+
+/** Gibt es für diese Fertigkeit eine Variante mit Bild als Hilfe? */
+export function hatBildHilfe(id) {
+  const info = skillInfo(id);
+  return !!(info && info.stufe.mitHilfe);
 }
 
 /** Größe einer Übungsrunde nach Klassenstufe (jüngere Kinder: kürzere Runden). */

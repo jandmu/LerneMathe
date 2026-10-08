@@ -48,6 +48,6 @@ export default {
     { id: 'bis5', titel: 'Bis 5', aufgabe: () => hausAufgabe(zufall(2, 5), true) },
     { id: 'bis10', titel: 'Bis 10', aufgabe: () => hausAufgabe(zufall(6, 9), true) },
     { id: 'zehner', titel: 'Zehnerfreunde', aufgabe: () => hausAufgabe(10, true) },
-    { id: 'zehner-ohne', titel: 'Zehnerfreunde ohne Bild', aufgabe: () => hausAufgabe(10, false) },
+    { id: 'zehner-ohne', titel: 'Zehnerfreunde ohne Bild', aufgabe: () => hausAufgabe(10, false), mitHilfe: () => hausAufgabe(10, true) },
   ],
 };

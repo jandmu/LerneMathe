@@ -4,6 +4,8 @@
  *   - Nach einem Fehler gibt es eine gezielte Rückmeldung und einen zweiten Versuch.
  *   - Nach dem zweiten Fehler wird der Lösungsweg gezeigt (Lösungsbeispiel als Rückmeldung).
  *   - Falsch gelöste Fertigkeiten kommen in derselben Runde noch einmal dran (höchstens 3 Zusatzaufgaben).
+ *   - Anpassende Hilfe: Nach zwei Fehlern in Folge bei einer Fertigkeit kommt eine Stütze zurück
+ *     (Bild oder erster Schritt als Tipp). Nach zwei richtigen Antworten mit Hilfe wird sie wieder ausgeblendet.
  *   - Am Ende wird die Lernkartei aktualisiert.
  */
 import { esc, wahl } from '../core/util.js';
@@ -17,6 +19,36 @@ import { tagesbeginn, TAG_MS } from '../core/util.js';
 
 const LOB = ['Richtig!', 'Genau!', 'Stimmt!', 'Super gerechnet!', 'Klasse!', 'Prima!'];
 const MAX_ZUSATZ = 3;
+/** Ab so vielen Fehlern in Folge kommt Hilfe; nach so vielen Treffern mit Hilfe wird sie ausgeblendet. */
+export const HILFE_AN = 2;
+export const HILFE_AUS = 2;
+
+/**
+ * Anpassende Hilfe pro Fertigkeit innerhalb einer Runde (reine Logik, ohne DOM).
+ * Gibt 'an', 'aus' oder null zurück, wenn sich etwas ändert.
+ */
+export function hilfeAktualisieren(stand, richtig, mitHilfe) {
+  if (!richtig) {
+    stand.treffer = 0;
+    stand.fehler++;
+    if (!stand.an && stand.fehler >= HILFE_AN) {
+      stand.an = true;
+      stand.fehler = 0;
+      return 'an';
+    }
+    return null;
+  }
+  stand.fehler = 0;
+  if (stand.an && mitHilfe) {
+    stand.treffer++;
+    if (stand.treffer >= HILFE_AUS) {
+      stand.an = false;
+      stand.treffer = 0;
+      return 'aus';
+    }
+  }
+  return null;
+}
 
 export function zeigeRunde(app, fokus) {
   const p = app.profil;
@@ -27,19 +59,35 @@ export function zeigeRunde(app, fokus) {
 
   const plan = rundePlanen({ skillIds: skills, f, fokus, anzahl: rundenGroesse(p.klasse), jetzt: app.jetzt() });
   const faelligAmStart = faellige(f, skills, app.jetzt());
-  const r = { plan, i: 0, ergebnisse: [], zusatz: 0, gesehen: new Set(), c: null };
+  const r = { plan, i: 0, ergebnisse: [], zusatz: 0, gesehen: new Set(), c: null, hilfe: new Map(), hilfeNachricht: null };
+
+  function hilfeStand(skill) {
+    if (!r.hilfe.has(skill)) r.hilfe.set(skill, { an: false, fehler: 0, treffer: 0 });
+    return r.hilfe.get(skill);
+  }
 
   function naechsteAufgabe() {
     const skill = r.plan[r.i];
     let a;
     for (let v = 0; v < 12; v++) {
-      a = aufgabeFuer(skill);
+      a = aufgabeFuer(skill, { hilfe: hilfeStand(skill).an });
       if (!r.gesehen.has(a.schluessel)) break;
     }
     r.gesehen.add(a.schluessel);
     // nachueben: Beim Ziffernschreiben darf nach zwei Fehlversuchen ohne Wertung weitergeübt werden.
-    r.c = { a, versuche: 0, erster: null, fertig: false, nachueben: false, weg: false, meldung: '', werte: {} };
+    r.c = { a, versuche: 0, erster: null, fertig: false, nachueben: false, weg: false, meldung: '', werte: {}, hilfeText: hilfeHinweis(a) };
+    r.hilfeNachricht = null;
     testAufgabe(a);
+  }
+
+  /** Kurzer Hinweis über der Aufgabe, wenn Hilfe dazukommt oder wieder wegfällt. */
+  function hilfeHinweis(a) {
+    const n = r.hilfeNachricht;
+    if (n && n.skill === a.skill && n.art === 'an') {
+      return a.hilfe === 'bild' ? 'Ich zeige dir jetzt wieder das Bild. Das hilft beim Rechnen.' : 'Hier ist ein Tipp für den Anfang.';
+    }
+    if (n && n.skill === a.skill && n.art === 'aus') return 'Das klappt schon gut. Jetzt probierst du es wieder ohne Hilfe.';
+    return '';
   }
 
   function fortschrittsLeiste() {
@@ -67,8 +115,10 @@ export function zeigeRunde(app, fokus) {
         <button type="button" class="knopf leise klein" data-action="beenden">Runde beenden</button>
       </div>
       <article class="karte aufgabe-karte" id="aufgabe">
-        <div class="karte-kopf"><span class="tag">${esc(info.thema.titel)} · ${esc(info.stufe.titel)}</span><span class="nr">${r.i + 1} / ${r.plan.length}</span></div>
+        <div class="karte-kopf"><span class="tag">${esc(info.thema.titel)} · ${esc(info.stufe.titel)}${a.hilfe ? ' · <span class="mit-hilfe">mit Hilfe</span>' : ''}</span><span class="nr">${r.i + 1} / ${r.plan.length}</span></div>
+        ${c.hilfeText ? `<p class="hilfe-hinweis">${c.hilfeText}</p>` : ''}
         ${aufgabeHTML(a, { vorlesen: true })}
+        ${a.tipp && !c.weg ? `<div class="tipp hilfe-tipp"><span class="etikett">Tipp</span><p>${a.tipp.text}</p>${a.tipp.mathe ? `<div class="mathe">${a.tipp.mathe}</div>` : ''}</div>` : ''}
         ${spur ? `<div class="rueckmeldung" role="status" aria-live="polite">${c.meldung}</div>` : ''}
         ${spur && c.fertig ? `<div class="knopfreihe mitte">${weiterKnopf}</div>` : ''}
         ${eingabeHTML(a, { klein: app.klein(), gesperrt, werte: c.werte })}
@@ -117,8 +167,13 @@ export function zeigeRunde(app, fokus) {
     const c = r.c;
     if (c.erster !== null) return;
     c.erster = richtig;
-    antwortEintragen(f, c.a.skill, { richtig, fehler, jetzt: app.jetzt() });
-    r.ergebnisse[r.i] = { skill: c.a.skill, richtig };
+    const hilfe = !!c.a.hilfe;
+    antwortEintragen(f, c.a.skill, { richtig, fehler, hilfe, jetzt: app.jetzt() });
+    r.ergebnisse[r.i] = hilfe ? { skill: c.a.skill, richtig, hilfe } : { skill: c.a.skill, richtig };
+    const wechsel = hilfeAktualisieren(hilfeStand(c.a.skill), richtig, hilfe);
+    if (wechsel) r.hilfeNachricht = { skill: c.a.skill, art: wechsel };
+    // Damit die Hilfe auch wirkt: Nach dem Einschalten kommt die Fertigkeit noch einmal dran.
+    if (wechsel === 'an' && !r.plan.slice(r.i + 1).includes(c.a.skill)) r.plan.push(c.a.skill);
     if (!richtig && r.zusatz < MAX_ZUSATZ) {
       r.plan.push(c.a.skill);
       r.zusatz++;
@@ -197,9 +252,13 @@ export function zeigeRunde(app, fokus) {
   function weiter() {
     r.i++;
     if (r.i >= r.plan.length) return ende();
+    const nachricht = r.hilfeNachricht;
     naechsteAufgabe();
+    // Die Nachricht gilt für die nächste Aufgabe dieser Fertigkeit, auch wenn eine andere dazwischen kommt.
+    if (nachricht && nachricht.skill !== r.c.a.skill) r.hilfeNachricht = nachricht;
     zeichnen();
-    app.sprich(vorleseText(r.c.a), r.c.a.immerVorlesen);
+    const hinweis = r.c.hilfeText ? r.c.hilfeText + ' ' : '';
+    app.sprich(hinweis + vorleseText(r.c.a), r.c.a.immerVorlesen);
   }
 
   async function ende() {

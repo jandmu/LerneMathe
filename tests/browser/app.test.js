@@ -214,3 +214,28 @@ test('Klasse 1: Themen mit Bild, Vorlese-Knöpfe auf Start- und Themenseite', as
   assert.equal(await seite.locator('.kopf-mit-ton .vorlese-knopf').count(), 1, 'Themenseite ohne Vorlese-Knopf');
   await fertig(seite);
 });
+
+test('Anpassende Hilfe: nach zwei Fehlern kommt das Bild zurück, nach zwei Treffern geht es wieder', async () => {
+  const seite = await seiteMitProfilen();
+  await profilWaehlen(seite, url, 0);
+  await seite.goto(url + '#/ueben/k1-plus20/ohne-bild');
+  await warte(seite, 250);
+  assert.equal(await seite.locator('#aufgabe .bild svg.feld').count(), 0, 'Stufe ohne Bild zeigt ein Bild');
+  for (let i = 0; i < 2; i++) {
+    await aufgabeLoesen(seite, { falsch: true });
+    await aufgabeLoesen(seite, { falsch: true });
+    await seite.click('#weiter');
+    await warte(seite);
+  }
+  assert.equal(await seite.locator('.hilfe-hinweis').count(), 1, 'Kein Hinweis auf die Hilfe');
+  assert.equal(await seite.locator('#aufgabe .bild svg.feld').count(), 1, 'Bild als Hilfe fehlt');
+  assert.match(await seite.textContent('.karte-kopf'), /mit Hilfe/);
+  for (let i = 0; i < 2; i++) {
+    await aufgabeLoesen(seite);
+    await seite.click('#weiter');
+    await warte(seite);
+  }
+  assert.equal(await seite.locator('#aufgabe .bild svg.feld').count(), 0, 'Hilfe wird nicht wieder ausgeblendet');
+  assert.match(await seite.textContent('.hilfe-hinweis'), /ohne Hilfe/);
+  await fertig(seite);
+});

@@ -59,6 +59,6 @@ export default {
   stufen: [
     { id: 'plus-bild', titel: 'Plus mit Bild', aufgabe: () => plus10(true) },
     { id: 'minus-bild', titel: 'Minus mit Bild', aufgabe: () => minus10(true) },
-    { id: 'gemischt', titel: 'Plus und Minus ohne Bild', aufgabe: () => (Math.random() < 0.5 ? plus10(false) : minus10(false)) },
+    { id: 'gemischt', titel: 'Plus und Minus ohne Bild', aufgabe: () => (Math.random() < 0.5 ? plus10(false) : minus10(false)), mitHilfe: () => (Math.random() < 0.5 ? plus10(true) : minus10(true)) },
   ],
 };

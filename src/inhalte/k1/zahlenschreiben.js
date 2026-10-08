@@ -40,7 +40,7 @@ export const ziffern = {
     { id: 'gerade', titel: '1, 4 und 7', aufgabe: () => zifferAufgabe([1, 4, 7], 'voll') },
     { id: 'rund', titel: '0, 6 und 9', aufgabe: () => zifferAufgabe([0, 6, 9], 'voll') },
     { id: 'kurven', titel: '2, 3, 5 und 8', aufgabe: () => zifferAufgabe([2, 3, 5, 8], 'voll') },
-    { id: 'wenig-hilfe', titel: 'Alle Ziffern mit wenig Hilfe', aufgabe: () => zifferAufgabe([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'wenig') },
+    { id: 'wenig-hilfe', titel: 'Alle Ziffern mit wenig Hilfe', aufgabe: () => zifferAufgabe([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'wenig'), mitHilfe: () => zifferAufgabe([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'voll') },
   ],
 };
 

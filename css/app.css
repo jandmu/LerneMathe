@@ -2690,3 +2690,26 @@ html.klein .rechnung {
   border-color: var(--akzent);
   box-shadow: 0 0 0 3px var(--akzent-zart);
 }
+
+/* Anpassende Hilfe in Übungsrunden */
+.hilfe-hinweis {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: var(--akzent-zart);
+  color: var(--tinte);
+  font-weight: 600;
+}
+
+.hilfe-tipp {
+  margin: 10px 0;
+}
+
+.hilfe-tipp p {
+  margin: 4px 0 0;
+}
+
+.mit-hilfe {
+  color: var(--fast);
+  font-weight: 700;
+}

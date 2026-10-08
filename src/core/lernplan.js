@@ -34,7 +34,7 @@ export function status(z, jetzt) {
 }
 
 /** Trägt eine einzelne (erste) Antwort ein. */
-export function antwortEintragen(f, id, { richtig, fehler, jetzt }) {
+export function antwortEintragen(f, id, { richtig, fehler, hilfe = false, jetzt }) {
   const alt = zustand(f, id);
   const z = { ...alt, verlauf: [...alt.verlauf, richtig ? 1 : 0].slice(-12), fehler: { ...alt.fehler } };
   z.versuche++;
@@ -44,27 +44,30 @@ export function antwortEintragen(f, id, { richtig, fehler, jetzt }) {
   f.skills[id] = z;
   const ereignis = { t: jetzt, s: id, r: richtig ? 1 : 0 };
   if (!richtig && fehler) ereignis.f = fehler;
+  if (hilfe) ereignis.h = 1;
   f.ereignisse.push(ereignis);
 }
 
 /**
  * Wertet eine Runde aus und verschiebt die Fertigkeiten in der Lernkartei.
- * ergebnisse: [{ skill, richtig }] – nur die ersten Versuche.
+ * ergebnisse: [{ skill, richtig, hilfe? }] – nur die ersten Versuche.
+ * Aufgaben mit Hilfe zählen nicht für den Aufstieg: Eine Fertigkeit gilt erst als gekonnt,
+ * wenn sie ohne Stütze gelingt. Fehler mit Hilfe zählen aber (dann sitzt es wirklich noch nicht).
  * Gibt die Änderungen zurück: [{ skill, vorher, nachher }]
  */
 export function rundeAuswerten(f, ergebnisse, jetzt) {
   const gruppen = new Map();
   for (const e of ergebnisse) {
     const g = gruppen.get(e.skill) || { n: 0, r: 0 };
-    g.n++;
-    if (e.richtig) g.r++;
+    if (!(e.hilfe && e.richtig)) g.n++;
+    if (e.richtig && !e.hilfe) g.r++;
     gruppen.set(e.skill, g);
   }
   const aenderungen = [];
   for (const [id, { n, r }] of gruppen) {
     const z = { ...zustand(f, id) };
     const vorher = z.fach;
-    const gut = n >= 3 ? r / n >= 0.8 : r === n;
+    const gut = n === 0 ? false : n >= 3 ? r / n >= 0.8 : r === n;
     const schlecht = n >= 3 ? r / n < 0.6 : r < n;
     if (gut) {
       const darfSteigen = z.fach < 2 || jetzt >= z.faellig;

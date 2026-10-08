@@ -2463,7 +2463,7 @@ html.klein .rechnung {
   font-size: 1.05rem;
   hyphens: auto;
   -webkit-hyphens: auto;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .teil-status {

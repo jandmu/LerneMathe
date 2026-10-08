@@ -87,7 +87,7 @@ export function zeigeWerkstatt(app, { wahl = false, neu = null } = {}) {
         if (t && teilEinbauen(f, t.id)) {
           await app.speichern();
           zeigeWerkstatt(app, { neu: t.id });
-          app.sprich(`Super! ${t.name} ist eingebaut.`, true);
+          app.sprich(`Super! ${t.name.replace(/\u00AD/g, '')} ist eingebaut.`, true);
           const buehne = document.querySelector('.werkstatt-buehne');
           if (buehne) buehne.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -106,4 +106,71 @@ export function zeigeWerkstatt(app, { wahl = false, neu = null } = {}) {
 
 function artikel(projekt) {
   return { auto: 'einen Sportwagen', rakete: 'eine Rakete', baumhaus: 'ein Baumhaus', tierpark: 'einen Tierpark' }[projekt] || 'etwas Tolles';
+}
+
+/**
+ * Vorschau für Eltern: alle Projekte, Farben und Teile frei ein- und ausschalten.
+ * Reine Ansicht – der Spielstand der Kinder bleibt unverändert.
+ */
+export function zeigeWerkstattVorschau(app) {
+  const v = app.werkstattVorschau || (app.werkstattVorschau = { projekt: 'auto', farbe: 0, teile: [], neu: null });
+  const p = PROJEKT_GRAFIK[v.projekt];
+  app.setze(
+    `<a class="zurueck" href="#/eltern">← Elternbereich</a>
+    <h1>Werkstatt-Vorschau</h1>
+    <p class="lead">Hier kannst du alle Projekte und Teile ausprobieren. Der Spielstand der Kinder ändert sich dabei nicht.</p>
+    <div class="segment" role="group" aria-label="Projekt">${PROJEKTE.map(
+      (id) => `<button type="button" data-action="projekt" data-projekt="${id}" aria-pressed="${id === v.projekt}">${PROJEKT_GRAFIK[id].name}</button>`
+    ).join('')}</div>
+    <div class="werkstatt-buehne">${projektBild(v.projekt, { farbe: v.farbe, teile: v.teile, neu: v.neu })}</div>
+    <div class="knopfreihe">
+      <button type="button" class="knopf klein" data-action="alle">Alle Teile</button>
+      <button type="button" class="knopf klein" data-action="keine">Keine Teile</button>
+    </div>
+    <ul class="teile-liste">
+      ${p.teile
+        .map((t) => {
+          const an = v.teile.includes(t.id);
+          return `<li><button type="button" class="teil-knopf${an ? ' eingebaut' : ''}" data-action="teil" data-teil="${t.id}" aria-pressed="${an}">
+            <span class="teil-name">${esc(t.name)}</span><span class="teil-status">${an ? '✓ an' : 'aus'}</span>
+          </button></li>`;
+        })
+        .join('')}
+    </ul>
+    <div class="farb-wahl werkstatt-farben" role="group" aria-label="Farbe wählen">
+      ${p.farben
+        .map((c, i) => `<button type="button" class="farb-knopf" data-action="farbe" data-farbe="${i}" style="background:${c}" aria-label="Farbe ${i + 1}" aria-pressed="${i === v.farbe}"></button>`)
+        .join('')}
+    </div>`,
+    {
+      projekt(el) {
+        v.projekt = el.dataset.projekt;
+        v.teile = [];
+        v.neu = null;
+        v.farbe = 0;
+        zeigeWerkstattVorschau(app);
+      },
+      teil(el) {
+        const id = el.dataset.teil;
+        v.neu = v.teile.includes(id) ? null : id;
+        v.teile = v.teile.includes(id) ? v.teile.filter((x) => x !== id) : v.teile.concat(id);
+        zeigeWerkstattVorschau(app);
+      },
+      alle() {
+        v.teile = p.teile.map((t) => t.id);
+        v.neu = null;
+        zeigeWerkstattVorschau(app);
+      },
+      keine() {
+        v.teile = [];
+        v.neu = null;
+        zeigeWerkstattVorschau(app);
+      },
+      farbe(el) {
+        v.farbe = Number(el.dataset.farbe);
+        v.neu = null;
+        zeigeWerkstattVorschau(app);
+      },
+    }
+  );
 }

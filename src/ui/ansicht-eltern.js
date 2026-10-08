@@ -8,6 +8,7 @@ import { FEHLERBILDER } from '../core/aufgabe.js';
 import { THEMEN, skillId, skillsFuerKlasse } from '../inhalte/index.js';
 import { avatar, sterne, statusPille } from './bausteine.js';
 import { profilFormular, profilLesen, profilFormularBinden } from './profilformular.js';
+import { zeigeWerkstattVorschau } from './ansicht-werkstatt.js';
 import { deutscheStimmen, beiStimmenGeladen, einstellen, sprich, kannSprechen, aktuelleStimme, stimmenGesamt, neuLaden } from './sprache.js';
 
 const TEMPI = [
@@ -16,8 +17,9 @@ const TEMPI = [
   ['1.1', 'Zügig'],
 ];
 
-export async function zeigeEltern(app) {
-  if (!app.elternOffen) return sperre(app);
+export async function zeigeEltern(app, unterseite) {
+  if (!app.elternOffen) return sperre(app, unterseite);
+  if (unterseite === 'werkstatt') return zeigeWerkstattVorschau(app);
   const profile = await app.profileLaden();
   const ansicht = app.elternAnsicht || (app.elternAnsicht = { auswahl: profile[0] ? profile[0].id : null, bearbeiten: null, neu: false, loeschen: null, allesLoeschen: false });
   if (ansicht.auswahl && !profile.some((p) => p.id === ansicht.auswahl)) ansicht.auswahl = profile[0] ? profile[0].id : null;
@@ -50,6 +52,12 @@ export async function zeigeEltern(app) {
           : ''
       }
       ${lernstand}
+    </section>
+
+    <section class="eltern-abschnitt">
+      <h2>Werkstatt</h2>
+      <p class="leise">Kinder bekommen Kisten für neue Sterne, die erste Runde am Tag und Wiederholungen. In der Vorschau kannst du alle Projekte und Teile ansehen, ohne den Spielstand zu ändern.</p>
+      <div class="knopfreihe"><a class="knopf" href="#/eltern/werkstatt">Werkstatt-Vorschau öffnen</a></div>
     </section>
 
     <section class="eltern-abschnitt">
@@ -335,7 +343,7 @@ async function lernstandHTML(app, p) {
     </table></div>`;
 }
 
-function sperre(app) {
+function sperre(app, unterseite) {
   const a = zufall(6, 9);
   const b = zufall(6, 9);
   app.setze(
@@ -355,7 +363,7 @@ function sperre(app) {
     ev.preventDefault();
     if (Number(document.getElementById('sperre-zahl').value) === a * b) {
       app.elternOffen = true;
-      zeigeEltern(app);
+      zeigeEltern(app, unterseite);
     } else {
       document.getElementById('sperre-fehler').hidden = false;
     }

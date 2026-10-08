@@ -25,7 +25,7 @@ import { zeigeWerkstatt } from './ui/ansicht-werkstatt.js';
 const AKTIVES_PROFIL = 'mathewerkstatt:aktiv';
 
 /** Wird bei jeder Veröffentlichung hochgezählt und im Elternbereich angezeigt. */
-export const VERSION = '0.8 · 8.10.2026';
+export const VERSION = '0.9 · 8.10.2026';
 
 const app = {
   db: new Datenbank(new LokalesBackend()),
@@ -150,7 +150,7 @@ async function route() {
     else if (ort === 'lernen') zeigeLernen(app, rest[0], rest[1]);
     else if (ort === 'ueben') zeigeRunde(app, rest.length >= 2 ? rest[0] + '/' + rest[1] : null);
     else if (ort === 'klassen') zeigeKlassen(app);
-    else if (ort === 'eltern') await zeigeEltern(app);
+    else if (ort === 'eltern') await zeigeEltern(app, rest[0]);
     else if (ort === 'werkstatt') zeigeWerkstatt(app);
     else await zeigeStart(app);
   } catch (fehler) {

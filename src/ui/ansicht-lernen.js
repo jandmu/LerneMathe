@@ -222,8 +222,11 @@ export function zeigeLernen(app, themaId, stufeId) {
           m.meldung = `<div class="meldung info"><p>${r.text}</p></div>`;
         } else if (r.status === 'richtig') {
           m.fertig = true;
-          m.meldung = `<div class="meldung ok"><span class="meldung-titel">Richtig!</span><p>Du hast den Weg zu Ende gerechnet.</p></div>`;
-          app.sprich('Richtig!');
+          const spur = a.eingabe.art === 'spur';
+          const titel = spur ? 'Schön geschrieben!' : 'Richtig!';
+          const text = spur ? a.nachRichtig || '' : 'Du hast den Weg zu Ende gerechnet.';
+          m.meldung = `<div class="meldung ok"><span class="meldung-titel">${titel}</span><p>${text}</p></div>`;
+          app.sprich(`${titel} ${spur ? text : ''}`);
         } else {
           m.versuche++;
           m.werte = eingabeWerte(karte, a);

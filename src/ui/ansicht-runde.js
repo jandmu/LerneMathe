@@ -108,7 +108,7 @@ export function zeigeRunde(app, fokus) {
 
   /** Spielt beim Ziffernschreiben den Schreibweg (erneut) vor. */
   function nochmalVorfuehren() {
-    const svg = document.querySelector('#aufgabe .spur-svg');
+    const svg = document.querySelector('#aufgabe .spur-feld .spur-svg');
     if (svg) setTimeout(() => vorfuehren(svg), 300);
   }
 

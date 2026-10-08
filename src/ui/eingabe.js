@@ -196,7 +196,7 @@ export function vorfuehren(svg) {
 /** Fingereingabe auf dem Schreibfeld. Ruft abschicken(striche) auf, sobald alle Striche gezogen sind. */
 function spurBinden(container, abschicken, vorfuehrungStarten) {
   const feld = container.querySelector('.spur-feld');
-  const svg = container.querySelector('.spur-svg');
+  const svg = feld && feld.querySelector('.spur-svg');
   if (!feld || !svg) return null;
   const gruppe = svg.querySelector('.spur-kind');
   const soll = Number(feld.dataset.striche) || 1;

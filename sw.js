@@ -4,7 +4,7 @@
  * nie alte und neue Programmdateien gemischt werden. Ohne Verbindung kommt alles aus dem Zwischenspeicher.
  * Bei jeder Veröffentlichung VERSION erhöhen, damit Browser den neuen Service Worker übernehmen.
  */
-const VERSION = '2';
+const VERSION = '3';
 const CACHE = 'mathewerkstatt-' + VERSION;
 const START = ['./', 'index.html', 'css/app.css', 'src/app.js', 'icon.svg', 'manifest.webmanifest'];
 

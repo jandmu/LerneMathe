@@ -8,6 +8,7 @@
  *   #/lernen/<thema>[/<stufe>]   Lernpfad: Erklären → Vormachen → Mitmachen
  *   #/ueben[/<thema>/<stufe>]    Übungsrunde (ohne Angabe: gemischte Wiederholung)
  *   #/klassen               Themen aller Klassen
+ *   #/werkstatt             Werkstatt (Belohnungen: Projekt bauen)
  *   #/eltern                Elternbereich
  */
 import { Datenbank, LokalesBackend } from './core/speicher.js';
@@ -19,11 +20,12 @@ import { zeigeKind, zeigeThema, zeigeKlassen } from './ui/ansicht-kind.js';
 import { zeigeLernen } from './ui/ansicht-lernen.js';
 import { zeigeRunde } from './ui/ansicht-runde.js';
 import { zeigeEltern } from './ui/ansicht-eltern.js';
+import { zeigeWerkstatt } from './ui/ansicht-werkstatt.js';
 
 const AKTIVES_PROFIL = 'mathewerkstatt:aktiv';
 
 /** Wird bei jeder Veröffentlichung hochgezählt und im Elternbereich angezeigt. */
-export const VERSION = '0.7 · 8.10.2026';
+export const VERSION = '0.8 · 8.10.2026';
 
 const app = {
   db: new Datenbank(new LokalesBackend()),
@@ -125,7 +127,7 @@ async function route() {
   const teile = (location.hash || '').replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
   const [ort, ...rest] = teile;
 
-  const brauchtProfil = ['kind', 'thema', 'lernen', 'ueben', 'klassen'].includes(ort);
+  const brauchtProfil = ['kind', 'thema', 'lernen', 'ueben', 'klassen', 'werkstatt'].includes(ort);
   if (brauchtProfil && !app.profil) {
     let gemerkt = null;
     try {
@@ -149,6 +151,7 @@ async function route() {
     else if (ort === 'ueben') zeigeRunde(app, rest.length >= 2 ? rest[0] + '/' + rest[1] : null);
     else if (ort === 'klassen') zeigeKlassen(app);
     else if (ort === 'eltern') await zeigeEltern(app);
+    else if (ort === 'werkstatt') zeigeWerkstatt(app);
     else await zeigeStart(app);
   } catch (fehler) {
     console.error(fehler);

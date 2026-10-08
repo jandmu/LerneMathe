@@ -9,6 +9,7 @@ export function profilFormular(p = null, { abbrechen = false, knopf = 'Speichern
   const klasse = p ? p.klasse : 1;
   const farbe = p ? p.farbe : 0;
   const vorlesen = p ? p.vorlesen : true;
+  const spiel = p ? p.werkstatt !== false : true;
   const mitInhalt = klassenMitInhalt();
   return `<form class="profil-form" id="profil-form" autocomplete="off" novalidate data-id="${p ? esc(p.id) : ''}">
     <label class="feld">
@@ -39,6 +40,10 @@ export function profilFormular(p = null, { abbrechen = false, knopf = 'Speichern
       <input type="checkbox" name="vorlesen" id="pf-vorlesen" ${vorlesen ? 'checked' : ''}>
       <span>Aufgaben vorlesen <span class="feld-hilfe">(empfohlen für Klasse 1 und 2)</span></span>
     </label>
+    <label class="schalter">
+      <input type="checkbox" name="werkstatt" ${spiel ? 'checked' : ''}>
+      <span>Werkstatt mit Belohnungen <span class="feld-hilfe">(für neue Sterne gibt es Teile für ein eigenes Projekt)</span></span>
+    </label>
     <p class="formular-fehler" id="pf-fehler" role="alert" hidden></p>
     <div class="knopfreihe">
       <button class="knopf primaer" type="submit">${knopf}</button>
@@ -59,6 +64,7 @@ export function profilLesen(form, alt = null) {
       klasse: Number(d.get('klasse')) || 1,
       farbe: Number(d.get('farbe')) || 0,
       vorlesen: d.get('vorlesen') === 'on',
+      werkstatt: d.get('werkstatt') === 'on',
       erstellt: alt ? alt.erstellt : new Date().toISOString(),
     },
   };

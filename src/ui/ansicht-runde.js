@@ -7,7 +7,9 @@
  *   - Am Ende wird die Lernkartei aktualisiert.
  */
 import { esc, wahl } from '../core/util.js';
-import { rundePlanen, antwortEintragen, rundeAuswerten, zustand } from '../core/lernplan.js';
+import { rundePlanen, antwortEintragen, rundeAuswerten, zustand, faellige } from '../core/lernplan.js';
+import { belohnen, werkstatt, GRUND_TEXT } from '../core/belohnung.js';
+import { projektBild } from './werkstatt-grafik.js';
 import { skillsFuerKlasse, skillInfo, aufgabeFuer, rundenGroesse } from '../inhalte/index.js';
 import { aufgabeHTML, schritteHTML, ergebnisBox, sterne, vorleseText } from './bausteine.js';
 import { eingabeHTML, eingabeBinden, eingabeFokus, eingabeWerte, vorfuehren } from './eingabe.js';
@@ -24,6 +26,7 @@ export function zeigeRunde(app, fokus) {
   if (!fokus && !skills.length) return app.geheZu('kind');
 
   const plan = rundePlanen({ skillIds: skills, f, fokus, anzahl: rundenGroesse(p.klasse), jetzt: app.jetzt() });
+  const faelligAmStart = faellige(f, skills, app.jetzt());
   const r = { plan, i: 0, ergebnisse: [], zusatz: 0, gesehen: new Set(), c: null };
 
   function naechsteAufgabe() {
@@ -202,6 +205,8 @@ export function zeigeRunde(app, fokus) {
     const jetzt = app.jetzt();
     const ergebnisse = r.ergebnisse.filter(Boolean);
     const aenderungen = rundeAuswerten(f, ergebnisse, jetzt);
+    const spiel = p.werkstatt !== false;
+    const kisten = spiel ? belohnen(f, { aenderungen, faelligAmStart, ergebnisse, jetzt }) : [];
     await app.speichern();
     const n = ergebnisse.length;
     const richtig = ergebnisse.filter((e) => e.richtig).length;
@@ -236,6 +241,7 @@ export function zeigeRunde(app, fokus) {
                 .join('')}</ul>`
             : ''
         }
+        ${kisten.length ? kistenHTML(kisten) : ''}
         <div class="knopfreihe">
           <button type="button" class="knopf primaer gross" data-action="nochmal">Noch eine Runde</button>
           <a class="knopf" href="#/kind">Zur Startseite</a>
@@ -245,7 +251,28 @@ export function zeigeRunde(app, fokus) {
         nochmal: () => zeigeRunde(app, fokus),
       }
     );
-    app.sprich(n ? `Runde geschafft! ${richtig} von ${n} richtig.` : 'Runde beendet.');
+    const kistenText = kisten.length ? ` Du hast ${kisten.length === 1 ? 'eine Kiste' : `${kisten.length} Kisten`} für deine Werkstatt verdient!` : '';
+    app.sprich((n ? `Runde geschafft! ${richtig} von ${n} richtig.` : 'Runde beendet.') + kistenText);
+  }
+
+  function kistenHTML(kisten) {
+    const w = werkstatt(f);
+    const grund = (k) => {
+      if (k.grund === 'stern') {
+        const info = skillInfo(k.skill);
+        return `${GRUND_TEXT.stern}: ${esc(info ? info.thema.titel : '')}`;
+      }
+      return GRUND_TEXT[k.grund];
+    };
+    return `<div class="kisten-gewinn">
+      <div class="kisten-text">
+        <span class="etikett">Werkstatt</span>
+        <b>${kisten.length === 1 ? 'Eine neue Kiste!' : `${kisten.length} neue Kisten!`}</b>
+        <ul>${kisten.map((k) => `<li>${grund(k)}</li>`).join('')}</ul>
+        <a class="knopf" href="#/werkstatt">${w.projekt ? 'Teil einbauen' : 'Projekt wählen'} →</a>
+      </div>
+      ${w.projekt ? `<div class="kisten-bild">${projektBild(w.projekt, { farbe: w.farbe, teile: w.teile[w.projekt] || [], klein: true })}</div>` : ''}
+    </div>`;
   }
 
   naechsteAufgabe();

@@ -11,6 +11,7 @@ Läuft auf Smartphone, Tablet und Rechner – ohne Installation, ohne Konto, ohn
 - **Übungsrunden** mit immer neu erzeugten Aufgaben, erklärender Rückmeldung, zweitem Versuch und Lösungsweg.
 - **Lernkartei mit Wiederholungsplan:** Was sitzt, kommt nach Tagen und Wochen wieder.
 - **Erkennung typischer Fehler** (z. B. „Nenner addiert“, „13 − 5 = 12“, „0,45 > 0,5“) mit eigener Erklärung.
+- **Werkstatt:** Jedes Kind baut ein eigenes Projekt (Sportwagen, Rakete, Baumhaus oder Tierpark). Teile gibt es für neue Sterne, die erste Runde am Tag und Wiederholungen – nicht für Tempo. Pro Kind abschaltbar.
 - **Elternbereich:** Profile verwalten, Lernstand und häufige Fehler je Kind, Sicherung herunterladen/einspielen.
 - **Klasse 1–2:** große Zahlentasten, wenig Text, Vorlesen. Hell- und Dunkelmodus, offline nutzbar.
 

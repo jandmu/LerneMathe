@@ -3,6 +3,8 @@ import { esc } from '../core/util.js';
 import { zustand, status, empfehlung, faellige, SITZT_AB } from '../core/lernplan.js';
 import { themenFuerKlasse, skillsFuerKlasse, skillInfo, skillId, thema as themaNach, klassenMitInhalt } from '../inhalte/index.js';
 import { sterne, statusPille } from './bausteine.js';
+import { werkstatt } from '../core/belohnung.js';
+import { projektBild } from './werkstatt-grafik.js';
 
 function stufenPunkte(app, t) {
   return `<span class="stufen-punkte" aria-hidden="true">${t.stufen
@@ -74,12 +76,23 @@ export function zeigeKind(app) {
   app.setze(
     `<section class="kind-start">
       <h1>Hallo, ${esc(p.name)}!</h1>
-      <div class="start-karten">${weiter}${wiederholen}</div>
+      <div class="start-karten">${weiter}<div class="start-seite">${wiederholen}${werkstattKarte(app)}</div></div>
       <h2 class="abschnitt">Deine Themen · Klasse ${p.klasse}</h2>
       <ol class="themen">${themen.map((t) => themaKarte(app, t)).join('')}</ol>
       <p class="leise-zeile"><a href="#/klassen">Themen anderer Klassen ansehen</a></p>
     </section>`
   );
+}
+
+function werkstattKarte(app) {
+  if (app.profil.werkstatt === false) return '';
+  const w = werkstatt(app.fortschritt);
+  const kisten = w.kisten ? `<span class="kisten-zahl">${w.kisten} ${w.kisten === 1 ? 'Kiste' : 'Kisten'}</span>` : '';
+  return `<a class="werkstatt-karte" href="#/werkstatt">
+    ${w.projekt ? projektBild(w.projekt, { farbe: w.farbe, teile: w.teile[w.projekt] || [], klein: true }) : ''}
+    <span class="werkstatt-zeile"><b>Deine Werkstatt</b>${kisten}</span>
+    ${w.projekt ? '' : '<span class="leise">Wähle dein Projekt!</span>'}
+  </a>`;
 }
 
 export function zeigeThema(app, id) {

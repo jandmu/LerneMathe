@@ -19,6 +19,7 @@ die Tabelle zeigt, wo.
 | **Wiederholtes Neulernen** (Rawson & Dunlosky 2011) | Falsch Gelöstes in derselben Sitzung erneut abrufen. | Falsch gelöste Fertigkeiten kommen in der Runde noch einmal (max. 3 Zusatzaufgaben). | `ansicht-runde.js` |
 | **Verschränktes Üben** (Rohrer & Taylor 2007) | Gemischte Aufgabentypen verbessern die Wahl des richtigen Verfahrens. | Fällige Wiederholungen werden in Fokus-Runden eingestreut; Tagesmix mischt bis zu vier Fertigkeiten. Neues wird zuerst geblockt geübt. | `rundePlanen()` |
 | **Lernen bis zur Beherrschung** (Bloom 1968; Kulik u. a. 1990) | Erst sichern, dann weiter. | Empfehlung „Als Nächstes“ folgt erst, wenn die vorige Stufe mindestens „fast sicher“ ist. Gesperrt wird nichts. | `empfehlung()` |
+| **Spielelemente mit Bedacht** (Sailer & Homner 2020; Deci, Koestner & Ryan 1999; Ryan & Deci 2000) | Spielelemente wirken im Mittel positiv, aber an Leistung gekoppelte, erwartbare Belohnungen können die eigene Motivation untergraben. Gut wirkt, was Kompetenz sichtbar macht und Wahlfreiheit lässt. | Werkstatt: Kisten nur für neue Sterne (Können über Tage), erste Runde am Tag, Wiederholungen und gelegentliche Überraschungen; nie für Tempo oder einzelne Antworten. Kind wählt Projekt, Teile und Farbe selbst. Nichts geht verloren, kein Vergleich zwischen Geschwistern, nie während einer Aufgabe sichtbar, pro Kind abschaltbar. | `core/belohnung.js`, `ui/ansicht-werkstatt.js` |
 | **Prozesslob, kein Druck** (Mueller & Dweck 1998; Ramirez u. a. 2013) | Lob für Fähigkeit („du bist schlau“) kann schaden; Zeitdruck verstärkt Rechenangst. | Keine Zeitlimits, keine Ranglisten; Rückmeldung lobt Anstrengung und Rechenweg. | Texte in `ansicht-runde.js` |
 
 ## Quellen
@@ -27,6 +28,7 @@ die Tabelle zeigt, wo.
 - Bloom, B. S. (1968). Learning for mastery. *Evaluation Comment, 1*(2).
 - Bruner, J. S. (1966). *Toward a Theory of Instruction*. Harvard University Press.
 - Cepeda, N. J., Pashler, H., Vul, E., Wixted, J. T., & Rohrer, D. (2006). Distributed practice in verbal recall tasks: A review and quantitative synthesis. *Psychological Bulletin, 132*(3), 354–380.
+- Deci, E. L., Koestner, R., & Ryan, R. M. (1999). A meta-analytic review of experiments examining the effects of extrinsic rewards on intrinsic motivation. *Psychological Bulletin, 125*(6), 627–668.
 - Dunlosky, J., Rawson, K. A., Marsh, E. J., Nathan, M. J., & Willingham, D. T. (2013). Improving students' learning with effective learning techniques. *Psychological Science in the Public Interest, 14*(1), 4–58.
 - Fyfe, E. R., McNeil, N. M., Son, J. Y., & Goldstone, R. L. (2014). Concreteness fading in mathematics and science instruction: A systematic review. *Educational Psychology Review, 26*(1), 9–25.
 - Gaidoschik, M. (2010). *Wie Kinder rechnen lernen – oder auch nicht*. Peter Lang.
@@ -41,6 +43,8 @@ die Tabelle zeigt, wo.
 - Resnick, L. B., Nesher, P., Leonard, F., Magone, M., Omanson, S., & Peled, I. (1989). Conceptual bases of arithmetic errors: The case of decimal fractions. *Journal for Research in Mathematics Education, 20*(1), 8–27.
 - Roediger, H. L., & Karpicke, J. D. (2006). Test-enhanced learning. *Psychological Science, 17*(3), 249–255.
 - Rohrer, D., & Taylor, K. (2007). The shuffling of mathematics problems improves learning. *Instructional Science, 35*(6), 481–498.
+- Ryan, R. M., & Deci, E. L. (2000). Self-determination theory and the facilitation of intrinsic motivation, social development, and well-being. *American Psychologist, 55*(1), 68–78.
+- Sailer, M., & Homner, L. (2020). The gamification of learning: A meta-analysis. *Educational Psychology Review, 32*(1), 77–112.
 - Shute, V. J. (2008). Focus on formative feedback. *Review of Educational Research, 78*(1), 153–189.
 - Steinle, V., & Stacey, K. (2004). Persistence of decimal misconceptions and readiness to move to expertise. *Proceedings of PME 28*, Vol. 4, 225–232.
 - Sweller, J. (1988). Cognitive load during problem solving. *Cognitive Science, 12*(2), 257–285.

@@ -25,7 +25,7 @@ import { zeigeWerkstatt } from './ui/ansicht-werkstatt.js';
 const AKTIVES_PROFIL = 'mathewerkstatt:aktiv';
 
 /** Wird bei jeder Veröffentlichung hochgezählt und im Elternbereich angezeigt. */
-export const VERSION = '0.11 · 8.10.2026';
+export const VERSION = '0.12 · 8.10.2026';
 
 const app = {
   db: new Datenbank(new LokalesBackend()),

@@ -8,7 +8,7 @@
 import { esc } from '../core/util.js';
 import { zustand, SITZT_AB } from '../core/lernplan.js';
 import { thema as themaNach, skillId, aufgabeFuer } from '../inhalte/index.js';
-import { aufgabeHTML, schritteHTML, ergebnisBox, LAUTSPRECHER, vorleseText } from './bausteine.js';
+import { aufgabeHTML, schritteHTML, ergebnisBox, LAUTSPRECHER, vorleseText, testAufgabe } from './bausteine.js';
 import { eingabeHTML, eingabeBinden, eingabeFokus, eingabeWerte } from './eingabe.js';
 import { F, kreise } from '../core/bruch.js';
 
@@ -185,6 +185,7 @@ export function zeigeLernen(app, themaId, stufeId) {
     if (!z.mit) {
       const a = aufgabeFuer(sid);
       z.mit = { a, gezeigt: Math.max(1, Math.floor(a.weg.length / 2)), versuche: 0, fertig: false, meldung: null, werte: {} };
+      testAufgabe(a);
     }
     const m = z.mit;
     const a = m.a;
@@ -229,7 +230,8 @@ export function zeigeLernen(app, themaId, stufeId) {
           app.sprich(`${titel} ${spur ? text : ''}`);
         } else {
           m.versuche++;
-          m.werte = eingabeWerte(karte, a);
+          // Wie in der Übungsrunde: Nur bei „fast richtig“ bleibt die Eingabe stehen, sonst neu anfangen.
+          m.werte = r.status === 'fast' ? eingabeWerte(karte, a) : {};
           if (m.versuche >= 2) {
             m.fertig = true;
             m.meldung = `<div class="meldung falsch"><span class="meldung-titel">Schau mal.</span><p>Hier ist der ganze Weg. Lies ihn in Ruhe durch.</p></div>`;

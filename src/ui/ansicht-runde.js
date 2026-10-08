@@ -11,7 +11,7 @@ import { rundePlanen, antwortEintragen, rundeAuswerten, zustand, faellige } from
 import { belohnen, werkstatt, GRUND_TEXT } from '../core/belohnung.js';
 import { projektBild } from './werkstatt-grafik.js';
 import { skillsFuerKlasse, skillInfo, aufgabeFuer, rundenGroesse } from '../inhalte/index.js';
-import { aufgabeHTML, schritteHTML, ergebnisBox, sterne, vorleseText } from './bausteine.js';
+import { aufgabeHTML, schritteHTML, ergebnisBox, sterne, vorleseText, testAufgabe } from './bausteine.js';
 import { eingabeHTML, eingabeBinden, eingabeFokus, eingabeWerte, vorfuehren } from './eingabe.js';
 import { tagesbeginn, TAG_MS } from '../core/util.js';
 
@@ -39,6 +39,7 @@ export function zeigeRunde(app, fokus) {
     r.gesehen.add(a.schluessel);
     // nachueben: Beim Ziffernschreiben darf nach zwei Fehlversuchen ohne Wertung weitergeübt werden.
     r.c = { a, versuche: 0, erster: null, fertig: false, nachueben: false, weg: false, meldung: '', werte: {} };
+    testAufgabe(a);
   }
 
   function fortschrittsLeiste() {

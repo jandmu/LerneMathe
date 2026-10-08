@@ -53,6 +53,11 @@ export function aufgabeHTML(a, { vorlesen = false } = {}) {
 export const LAUTSPRECHER =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" class="welle"/></svg>';
 
+/** Nur für automatische Browser-Tests: macht die aktuelle Aufgabe für den Test sichtbar. */
+export function testAufgabe(a) {
+  if (typeof window !== 'undefined' && window.__TEST__) window.__aufgabe = a;
+}
+
 export function istGesichert(fach) {
   return fach >= SITZT_AB;
 }

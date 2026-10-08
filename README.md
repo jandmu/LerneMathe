@@ -28,7 +28,8 @@ Weitere Klassen und Themen lassen sich ohne Änderung der Oberfläche ergänzen 
 
 ```bash
 npm start      # python3 -m http.server 8080 → http://localhost:8080
-npm test       # Tests (Node 20+)
+npm test               # Rechenkern, Inhalte, Lernplan (Node 20+)
+npm run test:browser   # Browser-Tests in Handy-Größe (Playwright, einmalig: npx playwright install chromium)
 ```
 
 Die App nutzt ES-Module und muss deshalb über einen Webserver geöffnet werden (nicht per Doppelklick als Datei).

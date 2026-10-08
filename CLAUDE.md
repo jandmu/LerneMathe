@@ -8,7 +8,8 @@
 - Didaktische Leitlinien stehen in `docs/DIDAKTIK.md` – neue Inhalte daran ausrichten
   (vom Bild zur Zahl, Strategien statt Abzählen, erklärende Rückmeldung, kein Zeitdruck).
 - Texte für Klasse 1–2: kurze Sätze, vorlesbar (`sprich`-Feld nutzen, wenn der Text Rechenzeichen enthält).
-- Vor dem Commit: `npm test`.
+- Vor dem Commit: `npm run test:alle` (Rechenkern-Tests und Browser-Tests in Handy-Größe, `tests/browser/`).
+  Neue Aufgabenarten in `tests/browser/hilfen.js` → `aufgabeLoesen()` ergänzen. GitHub Actions führt beides bei jedem Push aus.
 - Bei jeder Veröffentlichung `VERSION` in `src/app.js` (wird im Elternbereich angezeigt) und `VERSION` in `sw.js`
   erhöhen. Der Service Worker fragt jede Datei beim Server nach und lädt die App nach einem Update einmal neu,
   damit nie alte und neue Module gemischt laufen.

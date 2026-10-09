@@ -1,5 +1,8 @@
 # Hinweise für Claude
 
+Zuerst lesen: @docs/STAND.md (für wen, Entscheidungen, bekannte Fallstricke, nächste Schritte)
+und @docs/ARCHITEKTUR.md. Nach größeren Änderungen `docs/STAND.md` aktualisieren.
+
 - Sprache: Code-Bezeichner, Kommentare, Texte und Commit-Nachrichten auf Deutsch.
 - Keine Abhängigkeiten, kein Build-Schritt. ES-Module, direkt im Browser lauffähig.
 - `src/core/` und `src/inhalte/` dürfen nicht auf DOM zugreifen (werden in Node getestet).
